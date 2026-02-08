@@ -1,0 +1,9 @@
+IMPORTANT: Add Your Founder Photo Here
+
+1. Save your founder photo (the one you shared with laptop and microphone)
+2. Rename it to: founder.jpg
+3. Place it in this folder: public/founder.jpg
+
+The website is already configured to load it from /founder.jpg
+
+Your photo will appear in the "Meet the Founder" section automatically once you add it.
