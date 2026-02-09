@@ -18,7 +18,8 @@ const ParticleBackground = () => {
       vy: number;
       size: number;
       opacity: number;
-      hue: number;
+      twinkleSpeed: number;
+      twinklePhase: number;
     }> = [];
 
     const resize = () => {
@@ -27,55 +28,53 @@ const ParticleBackground = () => {
     };
 
     const createParticles = () => {
-      const count = Math.min(80, Math.floor(window.innerWidth / 20));
+      // More visible space dust with movement
+      const count = Math.min(200, Math.floor(window.innerWidth / 8));
       particles = Array.from({ length: count }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.4 + 0.1,
-        hue: 260 + Math.random() * 40,
+        vx: (Math.random() - 0.5) * 0.15, // More visible movement
+        vy: (Math.random() - 0.5) * 0.15,
+        size: Math.random() * 2 + 0.3,
+        opacity: Math.random() * 0.4 + 0.1, // More visible
+        twinkleSpeed: Math.random() * 0.015 + 0.008,
+        twinklePhase: Math.random() * Math.PI * 2,
       }));
-    };
-
-    const drawConnections = () => {
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 150) {
-            const opacity = (1 - dist / 150) * 0.08;
-            ctx!.beginPath();
-            ctx!.strokeStyle = `hsla(270, 80%, 65%, ${opacity})`;
-            ctx!.lineWidth = 0.5;
-            ctx!.moveTo(particles[i].x, particles[i].y);
-            ctx!.lineTo(particles[j].x, particles[j].y);
-            ctx!.stroke();
-          }
-        }
-      }
     };
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       particles.forEach((p) => {
+        // Slow floating movement
         p.x += p.vx;
         p.y += p.vy;
 
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        // Wrap around edges
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
 
+        // Twinkle effect
+        p.twinklePhase += p.twinkleSpeed;
+        const twinkle = Math.sin(p.twinklePhase) * 0.5 + 0.5;
+        const currentOpacity = p.opacity * twinkle;
+
+        // Draw star-like particle
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${p.hue}, 70%, 65%, ${p.opacity})`;
+        
+        // Green/cyan tint for some particles
+        const isGreen = Math.random() > 0.7;
+        if (isGreen) {
+          ctx.fillStyle = `hsla(158, 100%, 73%, ${currentOpacity})`;
+        } else {
+          ctx.fillStyle = `hsla(180, 20%, 80%, ${currentOpacity})`;
+        }
         ctx.fill();
       });
 
-      drawConnections();
       animationId = requestAnimationFrame(animate);
     };
 
@@ -98,7 +97,7 @@ const ParticleBackground = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.6 }}
+      style={{ opacity: 0.5 }}
     />
   );
 };
