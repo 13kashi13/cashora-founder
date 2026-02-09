@@ -354,7 +354,7 @@ const HeroSection = () => {
         </motion.h1>
 
         <motion.p
-          className="text-lg sm:text-xl md:text-2xl font-display font-medium max-w-2xl mx-auto mb-4 backdrop-blur-sm px-6 py-3 rounded-2xl"
+          className="text-lg sm:text-xl md:text-2xl font-black max-w-2xl mx-auto mb-4 backdrop-blur-sm px-6 py-3 rounded-2xl uppercase"
           style={{ 
             color: '#E5E7EB',
             backgroundColor: 'rgba(255, 255, 255, 0.02)',
@@ -364,11 +364,11 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
         >
-          AI-powered content automation for passive income
+          AI-POWERED CONTENT AUTOMATION FOR PASSIVE INCOME
         </motion.p>
 
         <motion.p
-          className="text-sm sm:text-base max-w-xl mx-auto mb-12 backdrop-blur-sm px-6 py-2 rounded-xl"
+          className="text-sm sm:text-base max-w-xl mx-auto mb-12 backdrop-blur-sm px-6 py-2 rounded-xl font-bold uppercase"
           style={{ 
             color: '#9CA3AF',
             backgroundColor: 'rgba(255, 255, 255, 0.01)',
@@ -377,8 +377,7 @@ const HeroSection = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
         >
-          Turn a single prompt into AI-generated videos and distribute them
-          across multiple platforms with one click.
+          TURN A SINGLE PROMPT INTO AI-GENERATED VIDEOS AND DISTRIBUTE THEM ACROSS MULTIPLE PLATFORMS WITH ONE CLICK.
         </motion.p>
 
         {/* CTA Buttons */}

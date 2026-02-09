@@ -87,6 +87,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error('This domain is not authorized. Add localhost to Firebase authorized domains.');
       } else if (error.code === 'auth/account-exists-with-different-credential') {
         throw new Error('An account already exists with the same email. Try signing in with Google instead.');
+      } else if (error.code === 'auth/operation-not-allowed') {
+        throw new Error('GitHub sign-in is not enabled. Please check GITHUB_AUTH_QUICK_SETUP.md for setup instructions.');
+      } else if (error.code === 'auth/invalid-credential') {
+        throw new Error('GitHub authentication not configured. Please check GITHUB_AUTH_QUICK_SETUP.md for setup instructions.');
       }
       
       throw error;

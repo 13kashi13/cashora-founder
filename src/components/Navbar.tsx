@@ -1,11 +1,28 @@
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Sparkles, LogOut } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Link, useNavigate } from "react-router-dom";
+import { Sparkles, LogOut, Menu, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { useState } from "react";
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const { scrollY } = useScroll();
+  
+  // Transform scroll to navbar background opacity
+  const navbarBg = useTransform(
+    scrollY,
+    [0, 100],
+    ['rgba(5, 10, 10, 0.3)', 'rgba(5, 10, 10, 0.8)']
+  );
+  
+  const borderOpacity = useTransform(
+    scrollY,
+    [0, 100],
+    [0.2, 0.5]
+  );
 
   const handleSignOut = async () => {
     try {
@@ -16,180 +33,301 @@ const Navbar = () => {
     }
   };
 
+  const handleLogoClick = () => {
+    navigate('/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <motion.nav
-      className="fixed top-4 left-1/2 -translate-x-1/2 z-50 backdrop-blur-2xl rounded-full px-6 py-3"
+      className="fixed top-0 left-0 right-0 z-50"
       style={{
-        backgroundColor: 'rgba(5, 10, 10, 0.4)',
-        border: '1px solid rgba(124, 255, 178, 0.3)',
-        boxShadow: '0 0 60px rgba(124, 255, 178, 0.2), 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-        minWidth: 'fit-content',
+        backgroundColor: navbarBg,
+        backdropFilter: 'blur(40px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(40px) saturate(180%)',
+        borderBottom: `1px solid rgba(124, 255, 178, ${borderOpacity})`,
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 80px rgba(124, 255, 178, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
       }}
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="flex items-center gap-8">
-        {/* Logo with sparkle */}
-        <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-          <motion.div
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      {/* Glass texture overlay */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%)',
+          mixBlendMode: 'overlay',
+        }}
+      />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo Section - Clickable */}
+          <motion.div 
+            onClick={handleLogoClick}
+            className="flex items-center gap-3 group cursor-pointer"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
-            <Sparkles className="w-5 h-5" style={{ color: '#7CFFB2' }} />
+            <motion.div
+              className="relative"
+              whileHover={{ scale: 1.1, rotate: 180 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-[#7CFFB2] to-[#5CE1E6] rounded-full blur-xl opacity-50 group-hover:opacity-100 transition-opacity" />
+              <div 
+                className="relative w-12 h-12 rounded-full flex items-center justify-center"
+                style={{
+                  background: 'linear-gradient(135deg, #7CFFB2 0%, #5CE1E6 100%)',
+                  boxShadow: '0 0 20px rgba(124, 255, 178, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                }}
+              >
+                <Sparkles className="w-6 h-6 text-black" />
+              </div>
+            </motion.div>
+            <div>
+              <motion.span
+                className="text-2xl font-black tracking-tight"
+                style={{
+                  background: 'linear-gradient(135deg, #7CFFB2 0%, #A8FFE0 50%, #5CE1E6 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  filter: 'drop-shadow(0 0 20px rgba(124, 255, 178, 0.3))',
+                }}
+              >
+                CASHORA
+              </motion.span>
+              <div className="text-[10px] tracking-widest text-[#7CFFB2] opacity-70">
+                CREATOR PLATFORM
+              </div>
+            </div>
           </motion.div>
-          <motion.span
-            className="text-xl font-bold whitespace-nowrap"
-            style={{
-              background: 'linear-gradient(90deg, #7CFFB2 0%, #A8FFE0 50%, #5CE1E6 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-            whileHover={{ scale: 1.05 }}
-          >
-            CASHORA
-          </motion.span>
-        </Link>
 
-        {/* Navigation Links */}
-        <div className="flex items-center gap-6">
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center gap-1">
+            {[
+              { label: 'HOW IT WORKS', href: '#how-it-works' },
+              { label: 'ABOUT', href: '#about' },
+              { label: 'PRICING', href: '#pricing' },
+              { label: 'TEAM', href: '#team' },
+            ].map((link) => (
+              <motion.a
+                key={link.href}
+                href={link.href}
+                className="relative px-5 py-2.5 text-sm font-black group uppercase"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="relative z-10 text-white/80 group-hover:text-white transition-colors">
+                  {link.label}
+                </span>
+                <motion.div
+                  className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(124, 255, 178, 0.15), rgba(92, 225, 230, 0.15))',
+                    border: '1px solid rgba(124, 255, 178, 0.3)',
+                    backdropFilter: 'blur(20px)',
+                    boxShadow: '0 4px 16px rgba(124, 255, 178, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                  }}
+                />
+              </motion.a>
+            ))}
+          </div>
+
+          {/* Auth Section */}
+          <div className="flex items-center gap-3">
+            {user ? (
+              <>
+                <Link to="/profile">
+                  <motion.div 
+                    className="flex items-center gap-3 px-4 py-2.5 rounded-xl cursor-pointer" 
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(124, 255, 178, 0.15), rgba(92, 225, 230, 0.15))',
+                      border: '1px solid rgba(124, 255, 178, 0.3)',
+                      backdropFilter: 'blur(20px)',
+                      boxShadow: '0 4px 16px rgba(124, 255, 178, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                    }}
+                    whileHover={{
+                      scale: 1.05,
+                      boxShadow: '0 8px 24px rgba(124, 255, 178, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {user.photoURL && (
+                      <img 
+                        src={user.photoURL} 
+                        alt={user.displayName || 'User'} 
+                        className="w-8 h-8 rounded-full ring-2 ring-[#7CFFB2]/30"
+                      />
+                    )}
+                    <span className="text-sm font-medium text-white/90 hidden sm:block">
+                      {user.displayName || user.email}
+                    </span>
+                  </motion.div>
+                </Link>
+                <motion.button
+                  onClick={handleSignOut}
+                  className="px-4 py-2.5 text-sm font-semibold rounded-xl flex items-center gap-2"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    backdropFilter: 'blur(20px)',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                  }}
+                  whileHover={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+                    scale: 1.05,
+                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden sm:inline">Logout</span>
+                </motion.button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="hidden sm:block">
+                  <motion.button
+                    className="px-6 py-2.5 text-sm font-black rounded-xl uppercase"
+                    style={{
+                      background: 'rgba(124, 255, 178, 0.12)',
+                      border: '1px solid rgba(124, 255, 178, 0.4)',
+                      backdropFilter: 'blur(20px)',
+                      color: '#7CFFB2',
+                      boxShadow: '0 4px 16px rgba(124, 255, 178, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                    }}
+                    whileHover={{
+                      backgroundColor: 'rgba(124, 255, 178, 0.2)',
+                      boxShadow: '0 8px 24px rgba(124, 255, 178, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
+                      scale: 1.05,
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Login
+                  </motion.button>
+                </Link>
+                <Link to="/signup">
+                  <motion.button
+                    className="px-6 py-2.5 text-sm font-black rounded-xl relative overflow-hidden uppercase"
+                    style={{
+                      background: 'linear-gradient(135deg, #1ED760, #5CE1E6)',
+                      color: '#000',
+                      boxShadow: '0 4px 20px rgba(30, 215, 96, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                    }}
+                    whileHover={{
+                      boxShadow: '0 8px 32px rgba(30, 215, 96, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+                      scale: 1.05,
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <span className="relative z-10">GET STARTED</span>
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                      initial={{ x: '-100%' }}
+                      whileHover={{ x: '100%' }}
+                      transition={{ duration: 0.6 }}
+                    />
+                  </motion.button>
+                </Link>
+              </>
+            )}
+
+            {/* Mobile Menu Button */}
+            <motion.button
+              className="lg:hidden p-2 rounded-lg"
+              style={{
+                background: 'rgba(124, 255, 178, 0.12)',
+                border: '1px solid rgba(124, 255, 178, 0.3)',
+                backdropFilter: 'blur(20px)',
+                boxShadow: '0 4px 16px rgba(124, 255, 178, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+              }}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              whileTap={{ scale: 0.9 }}
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6 text-[#7CFFB2]" />
+              ) : (
+                <Menu className="w-6 h-6 text-[#7CFFB2]" />
+              )}
+            </motion.button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      <motion.div
+        className="lg:hidden overflow-hidden"
+        initial={false}
+        animate={{
+          height: mobileMenuOpen ? 'auto' : 0,
+          opacity: mobileMenuOpen ? 1 : 0,
+        }}
+        transition={{ duration: 0.3 }}
+      >
+        <div 
+          className="px-4 py-6 space-y-3"
+          style={{
+            background: 'rgba(5, 10, 10, 0.95)',
+            backdropFilter: 'blur(40px)',
+            borderTop: '1px solid rgba(124, 255, 178, 0.2)',
+            boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+          }}
+        >
           {[
             { label: 'How It Works', href: '#how-it-works' },
-            { label: 'About Us', href: '#about' },
+            { label: 'About', href: '#about' },
             { label: 'Pricing', href: '#pricing' },
             { label: 'Team', href: '#team' },
           ].map((link) => (
             <motion.a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium relative group whitespace-nowrap"
-              style={{ color: 'rgba(255, 255, 255, 0.8)' }}
-              whileHover={{ scale: 1.05 }}
+              className="block px-4 py-3 text-base font-medium rounded-lg"
+              style={{
+                background: 'rgba(124, 255, 178, 0.08)',
+                border: '1px solid rgba(124, 255, 178, 0.2)',
+                backdropFilter: 'blur(20px)',
+                color: 'rgba(255, 255, 255, 0.9)',
+                boxShadow: '0 2px 8px rgba(124, 255, 178, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+              }}
+              onClick={() => setMobileMenuOpen(false)}
+              whileTap={{ scale: 0.98 }}
             >
               {link.label}
-              <motion.span
-                className="absolute -bottom-1 left-0 h-0.5 rounded-full"
-                style={{
-                  background: 'linear-gradient(90deg, #7CFFB2, #5CE1E6)',
-                  width: '0%',
-                }}
-                whileHover={{
-                  width: '100%',
-                  boxShadow: '0 0 10px rgba(124, 255, 178, 0.8)',
-                }}
-                transition={{ duration: 0.3 }}
-              />
             </motion.a>
           ))}
-        </div>
-
-        {/* Auth Buttons */}
-        <div className="flex items-center gap-3 flex-shrink-0">
-          {user ? (
-            <>
-              <Link to="/profile">
-                <motion.div 
-                  className="flex items-center gap-3 px-4 py-2 rounded-full backdrop-blur-xl cursor-pointer" 
-                  style={{
-                    background: 'rgba(124, 255, 178, 0.08)',
-                    border: '1px solid rgba(124, 255, 178, 0.3)',
-                    transition: 'all 0.15s ease-out',
-                  }}
-                  whileHover={{
-                    background: 'rgba(124, 255, 178, 0.12)',
-                    scale: 1.02,
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {user.photoURL && (
-                    <img 
-                      src={user.photoURL} 
-                      alt={user.displayName || 'User'} 
-                      className="w-8 h-8 rounded-full"
-                    />
-                  )}
-                  <span className="text-sm font-medium" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                    {user.displayName || user.email}
-                  </span>
-                </motion.div>
-              </Link>
+          {!user && (
+            <Link to="/login" className="block sm:hidden">
               <motion.button
-                onClick={handleSignOut}
-                className="px-4 py-2.5 text-sm font-semibold rounded-full backdrop-blur-xl relative overflow-hidden flex items-center gap-2"
+                className="w-full px-4 py-3 text-base font-semibold rounded-lg"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.3)',
-                  color: 'rgba(255, 255, 255, 0.9)',
-                  transition: 'all 0.15s ease-out',
-                }}
-                whileHover={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  scale: 1.05,
+                  background: 'rgba(124, 255, 178, 0.12)',
+                  border: '1px solid rgba(124, 255, 178, 0.4)',
+                  backdropFilter: 'blur(20px)',
+                  color: '#7CFFB2',
+                  boxShadow: '0 4px 16px rgba(124, 255, 178, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
                 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <LogOut className="w-4 h-4" />
-                Logout
+                Login
               </motion.button>
-            </>
-          ) : (
-            <>
-              <Link to="/login">
-                <motion.button
-                  className="px-5 py-2 text-sm font-semibold rounded-full backdrop-blur-xl relative overflow-hidden whitespace-nowrap"
-                  style={{
-                    background: 'rgba(124, 255, 178, 0.08)',
-                    border: '1px solid rgba(124, 255, 178, 0.4)',
-                    color: 'rgba(124, 255, 178, 0.95)',
-                    boxShadow: '0 0 20px rgba(124, 255, 178, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-                  }}
-                  whileHover={{
-                    backgroundColor: 'rgba(124, 255, 178, 0.15)',
-                    borderColor: 'rgba(124, 255, 178, 0.6)',
-                    boxShadow: '0 0 30px rgba(124, 255, 178, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
-                    scale: 1.05,
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer" />
-                  Login
-                </motion.button>
-              </Link>
-              <Link to="/signup">
-                <motion.button
-                  className="px-5 py-2 text-sm font-semibold rounded-full backdrop-blur-xl relative overflow-hidden whitespace-nowrap"
-                  style={{
-                    background: 'linear-gradient(135deg, #1ED760, #5CE1E6)',
-                    color: '#000',
-                    boxShadow: '0 0 40px rgba(30, 215, 96, 0.5), 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                  }}
-                  whileHover={{
-                    boxShadow: '0 0 60px rgba(30, 215, 96, 0.7), 0 4px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
-                    scale: 1.05,
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-shimmer" />
-                  Sign Up
-                </motion.button>
-              </Link>
-            </>
+            </Link>
           )}
         </div>
-      </div>
+      </motion.div>
 
-      {/* Floating glow effect */}
+      {/* Animated bottom glow */}
       <motion.div
-        className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[80%] h-8 rounded-full"
+        className="absolute bottom-0 left-0 right-0 h-px"
         style={{
-          background: 'radial-gradient(ellipse, rgba(124, 255, 178, 0.3) 0%, transparent 70%)',
-          filter: 'blur(20px)',
+          background: 'linear-gradient(90deg, transparent, #7CFFB2, #5CE1E6, transparent)',
+          opacity: 0.4,
         }}
         animate={{
-          opacity: [0.3, 0.6, 0.3],
-          scale: [1, 1.1, 1],
+          opacity: [0.4, 0.7, 0.4],
         }}
         transition={{
           duration: 3,
