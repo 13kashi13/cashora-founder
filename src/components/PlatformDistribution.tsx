@@ -133,6 +133,7 @@ const PlatformDistribution = () => {
                     width: `${radius}px`,
                     rotate: `${(angle * 180 / Math.PI) + 180}deg`,
                     background: `linear-gradient(90deg, hsl(${platform.color} / ${isHovered ? 0.5 : 0.15}), transparent)`,
+                    transition: 'background 0.15s ease-out',
                   }}
                   initial={{ scaleX: 0 }}
                   animate={isVisible ? { scaleX: 1 } : {}}
@@ -140,16 +141,18 @@ const PlatformDistribution = () => {
                 />
 
                 <motion.div
-                  className="w-16 h-16 rounded-2xl glass-card flex items-center justify-center transition-all duration-300"
-                  whileHover={{
-                    scale: 1.15,
-                    boxShadow: `0 0 40px hsl(${platform.color} / 0.3)`,
+                  className="w-16 h-16 rounded-2xl glass-card flex items-center justify-center"
+                  style={{
+                    boxShadow: isHovered ? `0 0 40px hsl(${platform.color} / 0.3)` : '0 0 0px transparent',
+                    transition: 'box-shadow 0.15s ease-out, transform 0.15s ease-out',
+                    transform: isHovered ? 'scale(1.15)' : 'scale(1)',
                   }}
                 >
                   <svg
-                    className="w-7 h-7 transition-colors duration-300"
+                    className="w-7 h-7"
                     style={{
                       color: isHovered ? `hsl(${platform.color})` : "hsl(260 10% 55%)",
+                      transition: 'color 0.15s ease-out',
                     }}
                     viewBox="0 0 24 24"
                     fill="currentColor"
@@ -157,16 +160,16 @@ const PlatformDistribution = () => {
                     <path d={platform.icon} />
                   </svg>
                 </motion.div>
-                <motion.span
+                <span
                   className="absolute top-full mt-3 left-1/2 -translate-x-1/2 text-xs font-medium whitespace-nowrap pointer-events-none"
                   style={{
                     color: isHovered ? `hsl(${platform.color})` : "hsl(260 10% 45%)",
+                    opacity: isHovered ? 1 : 0.6,
+                    transition: 'color 0.15s ease-out, opacity 0.15s ease-out',
                   }}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: isHovered ? 1 : 0.6 }}
                 >
                   {platform.name}
-                </motion.span>
+                </span>
               </motion.a>
             );
           })}

@@ -28,16 +28,16 @@ const ParticleBackground = () => {
     };
 
     const createParticles = () => {
-      // More visible space dust with movement
-      const count = Math.min(200, Math.floor(window.innerWidth / 8));
+      // Reduced particle count for better performance
+      const count = Math.min(120, Math.floor(window.innerWidth / 12));
       particles = Array.from({ length: count }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.15, // More visible movement
-        vy: (Math.random() - 0.5) * 0.15,
-        size: Math.random() * 2 + 0.3,
-        opacity: Math.random() * 0.4 + 0.1, // More visible
-        twinkleSpeed: Math.random() * 0.015 + 0.008,
+        vx: (Math.random() - 0.5) * 0.1,
+        vy: (Math.random() - 0.5) * 0.1,
+        size: Math.random() * 1.8 + 0.3,
+        opacity: Math.random() * 0.35 + 0.1,
+        twinkleSpeed: Math.random() * 0.012 + 0.006,
         twinklePhase: Math.random() * Math.PI * 2,
       }));
     };
