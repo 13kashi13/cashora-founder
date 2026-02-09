@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Check, Sparkles, Zap, Crown } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const PricingSection = () => {
   const plans = [
@@ -204,29 +205,31 @@ const PricingSection = () => {
                   </ul>
 
                   {/* CTA Button */}
-                  <motion.button
-                    className="w-full py-3 rounded-xl font-semibold relative overflow-hidden"
-                    style={plan.popular ? {
-                      background: 'linear-gradient(90deg, #1ED760, #5CE1E6)',
-                      color: '#000',
-                      boxShadow: '0 0 30px rgba(30, 215, 96, 0.4)',
-                    } : {
-                      background: 'rgba(124, 255, 178, 0.1)',
-                      border: '1px solid rgba(124, 255, 178, 0.3)',
-                      color: 'rgba(124, 255, 178, 0.95)',
-                    }}
-                    whileHover={plan.popular ? {
-                      boxShadow: '0 0 40px rgba(30, 215, 96, 0.6)',
-                      scale: 1.02,
-                    } : {
-                      background: 'rgba(124, 255, 178, 0.15)',
-                      scale: 1.02,
-                    }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer" />
-                    Get Started
-                  </motion.button>
+                  <Link to="/signup" className="block">
+                    <motion.button
+                      className="w-full py-3 rounded-xl font-semibold relative overflow-hidden"
+                      style={plan.popular ? {
+                        background: 'linear-gradient(90deg, #1ED760, #5CE1E6)',
+                        color: '#000',
+                        boxShadow: '0 0 30px rgba(30, 215, 96, 0.4)',
+                      } : {
+                        background: 'rgba(124, 255, 178, 0.1)',
+                        border: '1px solid rgba(124, 255, 178, 0.3)',
+                        color: 'rgba(124, 255, 178, 0.95)',
+                      }}
+                      whileHover={plan.popular ? {
+                        boxShadow: '0 0 40px rgba(30, 215, 96, 0.6)',
+                        scale: 1.02,
+                      } : {
+                        background: 'rgba(124, 255, 178, 0.15)',
+                        scale: 1.02,
+                      }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer" />
+                      Get Started
+                    </motion.button>
+                  </Link>
                 </motion.div>
               </motion.div>
             );

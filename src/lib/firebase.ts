@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, GithubAuthProvider } from 'firebase/auth';
 
 // Firebase configuration
 // Replace these with your actual Firebase project credentials
@@ -18,8 +18,14 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase Authentication and get a reference to the service
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+export const githubProvider = new GithubAuthProvider();
 
 // Configure Google provider
 googleProvider.setCustomParameters({
   prompt: 'select_account'
+});
+
+// Configure GitHub provider
+githubProvider.setCustomParameters({
+  allow_signup: 'true'
 });

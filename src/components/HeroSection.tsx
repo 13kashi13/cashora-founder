@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring } from "fram
 import { useRef, useEffect } from "react";
 import { ArrowRight, Play } from "lucide-react";
 import { smoothScrollToWithInertia } from "@/lib/smoothScroll";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -408,29 +409,29 @@ const HeroSection = () => {
             <Play className="w-4 h-4" />
             See How It Works
           </motion.a>
-          <motion.a
-            href="#status"
-            onClick={(e) => handleSmoothScroll(e, '#status')}
-            className="relative inline-flex items-center justify-center gap-3 px-8 py-4 text-base font-semibold rounded-full cursor-pointer backdrop-blur-xl overflow-hidden"
-            style={{
-              background: 'rgba(124, 255, 178, 0.05)',
-              border: '1px solid rgba(124, 255, 178, 0.3)',
-              color: 'rgba(124, 255, 178, 0.95)',
-              boxShadow: '0 0 20px rgba(124, 255, 178, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
-            }}
-            whileHover={{ 
-              scale: 1.05,
-              borderColor: 'rgba(124, 255, 178, 0.5)',
-              boxShadow: '0 0 30px rgba(124, 255, 178, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
-              backgroundColor: 'rgba(124, 255, 178, 0.08)',
-            }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ duration: 0.3 }}
-          >
-            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer" />
-            Coming Soon
-            <ArrowRight className="w-4 h-4" />
-          </motion.a>
+          <Link to="/signup">
+            <motion.button
+              className="relative inline-flex items-center justify-center gap-3 px-8 py-4 text-base font-semibold rounded-full cursor-pointer backdrop-blur-xl overflow-hidden"
+              style={{
+                background: 'rgba(124, 255, 178, 0.05)',
+                border: '1px solid rgba(124, 255, 178, 0.3)',
+                color: 'rgba(124, 255, 178, 0.95)',
+                boxShadow: '0 0 20px rgba(124, 255, 178, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+              }}
+              whileHover={{ 
+                scale: 1.05,
+                borderColor: 'rgba(124, 255, 178, 0.5)',
+                boxShadow: '0 0 30px rgba(124, 255, 178, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+                backgroundColor: 'rgba(124, 255, 178, 0.08)',
+              }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ duration: 0.3 }}
+            >
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer" />
+              Get Started
+              <ArrowRight className="w-4 h-4" />
+            </motion.button>
+          </Link>
         </motion.div>
       </motion.div>
 

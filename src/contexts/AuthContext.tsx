@@ -7,12 +7,13 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword
 } from 'firebase/auth';
-import { auth, googleProvider } from '@/lib/firebase';
+import { auth, googleProvider, githubProvider } from '@/lib/firebase';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInWithGithub: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -71,6 +72,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const signInWithGithub = async () => {
+    try {
+      await signInWithPopup(auth, githubProvider);
+    } catch (error: any) {
+      console.error('Error signing in with GitHub:', error);
+      
+      // Provide helpful error messages
+      if (error.code === 'auth/popup-blocked') {
+        throw new Error('Popup was blocked. Please allow popups for this site.');
+      } else if (error.code === 'auth/popup-closed-by-user') {
+        throw new Error('Sign-in cancelled. Please try again.');
+      } else if (error.code === 'auth/unauthorized-domain') {
+        throw new Error('This domain is not authorized. Add localhost to Firebase authorized domains.');
+      } else if (error.code === 'auth/account-exists-with-different-credential') {
+        throw new Error('An account already exists with the same email. Try signing in with Google instead.');
+      }
+      
+      throw error;
+    }
+  };
+
   const signInWithEmail = async (email: string, password: string) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -102,6 +124,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     loading,
     signInWithGoogle,
+    signInWithGithub,
     signInWithEmail,
     signUpWithEmail,
     signOut,
