@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import FirebaseTest from "./pages/FirebaseTest";
+import Profile from "./pages/Profile";
 import AnimatedGradientBg from "./components/AnimatedGradientBg";
 import ParticleBackground from "./components/ParticleBackground";
 import LiquidScroll from "./components/LiquidScroll";
@@ -31,6 +32,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="/firebase-test" element={<FirebaseTest />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

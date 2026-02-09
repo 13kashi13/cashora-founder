@@ -30,17 +30,11 @@ const Navbar = () => {
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="flex items-center gap-8">
-        {/* Logo with sparkle - LEFT */}
+        {/* Logo with sparkle */}
         <Link to="/" className="flex items-center gap-2 flex-shrink-0">
           <motion.div
-            animate={{
-              rotate: [0, 360],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "linear",
-            }}
+            animate={{ rotate: [0, 360] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           >
             <Sparkles className="w-5 h-5" style={{ color: '#7CFFB2' }} />
           </motion.div>
@@ -58,7 +52,7 @@ const Navbar = () => {
           </motion.span>
         </Link>
 
-        {/* Navigation Links - CENTER */}
+        {/* Navigation Links */}
         <div className="flex items-center gap-6">
           {[
             { label: 'How It Works', href: '#how-it-works' },
@@ -90,25 +84,36 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Auth Buttons - RIGHT */}
+        {/* Auth Buttons */}
         <div className="flex items-center gap-3 flex-shrink-0">
           {user ? (
             <>
-              <div className="flex items-center gap-3 px-4 py-2 rounded-full backdrop-blur-xl" style={{
-                background: 'rgba(124, 255, 178, 0.08)',
-                border: '1px solid rgba(124, 255, 178, 0.3)',
-              }}>
-                {user.photoURL && (
-                  <img 
-                    src={user.photoURL} 
-                    alt={user.displayName || 'User'} 
-                    className="w-8 h-8 rounded-full"
-                  />
-                )}
-                <span className="text-sm font-medium" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                  {user.displayName || user.email}
-                </span>
-              </div>
+              <Link to="/profile">
+                <motion.div 
+                  className="flex items-center gap-3 px-4 py-2 rounded-full backdrop-blur-xl cursor-pointer" 
+                  style={{
+                    background: 'rgba(124, 255, 178, 0.08)',
+                    border: '1px solid rgba(124, 255, 178, 0.3)',
+                    transition: 'all 0.15s ease-out',
+                  }}
+                  whileHover={{
+                    background: 'rgba(124, 255, 178, 0.12)',
+                    scale: 1.02,
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {user.photoURL && (
+                    <img 
+                      src={user.photoURL} 
+                      alt={user.displayName || 'User'} 
+                      className="w-8 h-8 rounded-full"
+                    />
+                  )}
+                  <span className="text-sm font-medium" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                    {user.displayName || user.email}
+                  </span>
+                </motion.div>
+              </Link>
               <motion.button
                 onClick={handleSignOut}
                 className="px-4 py-2.5 text-sm font-semibold rounded-full backdrop-blur-xl relative overflow-hidden flex items-center gap-2"
@@ -116,6 +121,7 @@ const Navbar = () => {
                   background: 'rgba(255, 255, 255, 0.05)',
                   border: '1px solid rgba(255, 255, 255, 0.3)',
                   color: 'rgba(255, 255, 255, 0.9)',
+                  transition: 'all 0.15s ease-out',
                 }}
                 whileHover={{
                   backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -174,7 +180,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Floating glow effect underneath */}
+      {/* Floating glow effect */}
       <motion.div
         className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[80%] h-8 rounded-full"
         style={{
