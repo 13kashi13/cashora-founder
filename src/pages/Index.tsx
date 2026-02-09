@@ -1,6 +1,6 @@
 import HeroSection from "@/components/HeroSection";
 import LiquidScroll from "@/components/LiquidScroll";
-import FounderSection from "@/components/FounderSection";
+import TeamSection from "@/components/TeamSection";
 import HowItWorks from "@/components/HowItWorks";
 import PlatformDistribution from "@/components/PlatformDistribution";
 import GrowthGraphs from "@/components/GrowthGraphs";
@@ -18,7 +18,7 @@ const Index = () => {
       <ParticleBackground />
       <LiquidScroll className="relative z-10">
         <HeroSection />
-        <FounderSection />
+        <TeamSection />
         <HowItWorks />
         <PlatformDistribution />
         <GrowthGraphs />
