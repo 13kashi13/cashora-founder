@@ -265,13 +265,51 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Hardware acceleration for animations */
+/* Hardware acceleration for all animations */
 .animate-pulse-glow,
 .animate-spin-slow,
-.animate-float {
-  will-change: transform, opacity;
+.animate-float,
+.animate-shimmer,
+.animate-morph {
+  will-change: transform;
   transform: translateZ(0);
   backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Force GPU acceleration */
+body {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* Optimize scrolling */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Optimize motion elements */
+[class*="motion-"] {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+/* Optimize framer-motion elements */
+div[style*="transform"] {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Optimize canvas */
+canvas {
+  will-change: contents;
+  transform: translateZ(0);
+}
+
+/* Optimize SVG animations */
+svg {
+  will-change: auto;
 }
 
 /* Faster transitions */

@@ -15,24 +15,41 @@ const HeroSection = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.92]);
 
-  // Mouse parallax effect
+  // Simplified mouse parallax - only on desktop, throttled
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   
-  const springConfig = { damping: 25, stiffness: 150 };
+  const springConfig = { damping: 30, stiffness: 100 };
   const mouseXSpring = useSpring(mouseX, springConfig);
   const mouseYSpring = useSpring(mouseY, springConfig);
 
   useEffect(() => {
+    // Disable parallax on mobile for performance
+    if (window.innerWidth < 768) return;
+
+    let rafId: number;
+    let lastX = 0;
+    let lastY = 0;
+
     const handleMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      const { innerWidth, innerHeight } = window;
-      mouseX.set((clientX - innerWidth / 2) / 50);
-      mouseY.set((clientY - innerHeight / 2) / 50);
+      lastX = e.clientX;
+      lastY = e.clientY;
+
+      if (rafId) return;
+
+      rafId = requestAnimationFrame(() => {
+        const { innerWidth, innerHeight } = window;
+        mouseX.set((lastX - innerWidth / 2) / 80); // Reduced intensity
+        mouseY.set((lastY - innerHeight / 2) / 80);
+        rafId = 0;
+      });
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, [mouseX, mouseY]);
 
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
@@ -45,127 +62,60 @@ const HeroSection = () => {
       ref={sectionRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      {/* Concentric rings - automation loops with parallax */}
+      {/* Simplified concentric rings - static for performance */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        {[1, 2, 3, 4, 5].map((ring) => (
-          <motion.div
+        {[1, 2, 3].map((ring) => (
+          <div
             key={ring}
             className="absolute rounded-full"
             style={{
-              width: `${ring * 260}px`,
-              height: `${ring * 260}px`,
-              border: '1px solid rgba(124, 255, 178, 0.015)',
-              x: useTransform(mouseXSpring, (x) => x * ring * 0.1),
-              y: useTransform(mouseYSpring, (y) => y * ring * 0.1),
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0.1, 0.2, 0.1] }}
-            transition={{ 
-              duration: 10,
-              delay: ring * 0.5,
-              repeat: Infinity,
-              ease: "easeInOut"
+              width: `${ring * 300}px`,
+              height: `${ring * 300}px`,
+              border: '1px solid rgba(124, 255, 178, 0.02)',
+              opacity: 0.15,
             }}
           />
         ))}
       </div>
 
-      {/* Floating orbs with parallax */}
+      {/* Simplified floating orbs - reduced animations */}
       <motion.div
         className="absolute top-[20%] left-[15%] w-32 h-32 rounded-full"
         style={{
-          background: 'radial-gradient(circle, rgba(124, 255, 178, 0.2) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(124, 255, 178, 0.15) 0%, transparent 70%)',
           filter: 'blur(40px)',
-          x: useTransform(mouseXSpring, (x) => x * 2),
-          y: useTransform(mouseYSpring, (y) => y * 2),
         }}
         animate={{ 
-          y: [0, -40, 0],
-          scale: [1, 1.2, 1],
+          y: [0, -30, 0],
         }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
       />
       
       <motion.div
         className="absolute top-[60%] right-[12%] w-40 h-40 rounded-full"
         style={{
-          background: 'radial-gradient(circle, rgba(94, 225, 230, 0.18) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(94, 225, 230, 0.12) 0%, transparent 70%)',
           filter: 'blur(50px)',
-          x: useTransform(mouseXSpring, (x) => x * -1.5),
-          y: useTransform(mouseYSpring, (y) => y * -1.5),
         }}
         animate={{ 
-          y: [0, 30, 0],
-          scale: [1, 1.15, 1],
+          y: [0, 25, 0],
         }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 2 }}
       />
 
-      <motion.div
-        className="absolute bottom-[30%] left-[8%] w-24 h-24 rounded-full"
-        style={{
-          background: 'radial-gradient(circle, rgba(168, 255, 224, 0.15) 0%, transparent 70%)',
-          filter: 'blur(35px)',
-          x: useTransform(mouseXSpring, (x) => x * 1.8),
-          y: useTransform(mouseYSpring, (y) => y * 1.8),
-        }}
-        animate={{ 
-          y: [0, -20, 0],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 4 }}
-      />
-
-      {/* Geometric shapes with parallax */}
-      <motion.div
-        className="absolute top-[35%] right-[20%] w-4 h-4 rounded-full"
-        style={{
-          background: 'rgba(124, 255, 178, 0.6)',
-          boxShadow: '0 0 30px rgba(124, 255, 178, 0.8)',
-          x: useTransform(mouseXSpring, (x) => x * -2),
-          y: useTransform(mouseYSpring, (y) => y * -2),
-        }}
-        animate={{ 
-          y: [0, -50, 0],
-          opacity: [0.4, 1, 0.4],
-        }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      />
-
-      <motion.div
-        className="absolute top-[50%] left-[25%] w-3 h-3 rounded-full"
-        style={{
-          background: 'rgba(94, 225, 230, 0.7)',
-          boxShadow: '0 0 25px rgba(94, 225, 230, 0.9)',
-          x: useTransform(mouseXSpring, (x) => x * 2.5),
-          y: useTransform(mouseYSpring, (y) => y * 2.5),
-        }}
-        animate={{ 
-          y: [0, 40, 0],
-          opacity: [0.5, 1, 0.5],
-        }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-      />
-
-      {/* 3D FLOATING DOLLAR SIGNS */}
+      {/* Optimized 3D FLOATING DOLLAR SIGNS - reduced count and complexity */}
       <motion.div
         className="absolute top-[15%] right-[15%]"
         style={{
           fontSize: '120px',
           fontWeight: 'bold',
-          color: 'rgba(124, 255, 178, 0.2)',
-          textShadow: '0 0 40px rgba(124, 255, 178, 0.7), 0 0 80px rgba(124, 255, 178, 0.5), 5px 5px 0 rgba(124, 255, 178, 0.4), 10px 10px 0 rgba(124, 255, 178, 0.3)',
-          x: useTransform(mouseXSpring, (x) => x * -3),
-          y: useTransform(mouseYSpring, (y) => y * -3),
-          rotateX: useTransform(mouseYSpring, (y) => y * 2),
-          rotateY: useTransform(mouseXSpring, (x) => x * 2),
+          color: 'rgba(124, 255, 178, 0.18)',
+          textShadow: '0 0 40px rgba(124, 255, 178, 0.6), 5px 5px 0 rgba(124, 255, 178, 0.3)',
         }}
         animate={{
-          y: [0, -30, 0],
-          rotateZ: [0, 10, 0],
-          scale: [1, 1.1, 1],
+          y: [0, -25, 0],
         }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       >
         $
       </motion.div>
@@ -173,99 +123,18 @@ const HeroSection = () => {
       <motion.div
         className="absolute bottom-[20%] left-[10%]"
         style={{
-          fontSize: '150px',
+          fontSize: '140px',
           fontWeight: 'bold',
-          color: 'rgba(94, 225, 230, 0.18)',
-          textShadow: '0 0 50px rgba(94, 225, 230, 0.8), 0 0 100px rgba(94, 225, 230, 0.6), 6px 6px 0 rgba(94, 225, 230, 0.35), 12px 12px 0 rgba(94, 225, 230, 0.25)',
-          x: useTransform(mouseXSpring, (x) => x * 2.5),
-          y: useTransform(mouseYSpring, (y) => y * 2.5),
-          rotateX: useTransform(mouseYSpring, (y) => y * -2),
-          rotateY: useTransform(mouseXSpring, (x) => x * -2),
+          color: 'rgba(94, 225, 230, 0.15)',
+          textShadow: '0 0 50px rgba(94, 225, 230, 0.7), 6px 6px 0 rgba(94, 225, 230, 0.3)',
         }}
         animate={{
-          y: [0, 40, 0],
-          rotateZ: [0, -15, 0],
-          scale: [1, 1.15, 1],
+          y: [0, 30, 0],
         }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
       >
         $
       </motion.div>
-
-      <motion.div
-        className="absolute top-[45%] left-[5%]"
-        style={{
-          fontSize: '100px',
-          fontWeight: 'bold',
-          color: 'rgba(168, 255, 224, 0.15)',
-          textShadow: '0 0 35px rgba(168, 255, 224, 0.7), 0 0 70px rgba(168, 255, 224, 0.5), 4px 4px 0 rgba(168, 255, 224, 0.3), 8px 8px 0 rgba(168, 255, 224, 0.2)',
-          x: useTransform(mouseXSpring, (x) => x * 2),
-          y: useTransform(mouseYSpring, (y) => y * 2),
-          rotateX: useTransform(mouseYSpring, (y) => y * 1.5),
-          rotateY: useTransform(mouseXSpring, (x) => x * 1.5),
-        }}
-        animate={{
-          y: [0, -25, 0],
-          rotateZ: [0, 12, 0],
-          scale: [1, 1.08, 1],
-        }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 4 }}
-      >
-        $
-      </motion.div>
-
-      <motion.div
-        className="absolute top-[60%] right-[8%]"
-        style={{
-          fontSize: '130px',
-          fontWeight: 'bold',
-          color: 'rgba(124, 255, 178, 0.19)',
-          textShadow: '0 0 45px rgba(124, 255, 178, 0.75), 0 0 90px rgba(124, 255, 178, 0.55), 5px 5px 0 rgba(124, 255, 178, 0.38), 10px 10px 0 rgba(124, 255, 178, 0.28)',
-          x: useTransform(mouseXSpring, (x) => x * -2.8),
-          y: useTransform(mouseYSpring, (y) => y * -2.8),
-          rotateX: useTransform(mouseYSpring, (y) => y * 2.5),
-          rotateY: useTransform(mouseXSpring, (x) => x * 2.5),
-        }}
-        animate={{
-          y: [0, 35, 0],
-          rotateZ: [0, -10, 0],
-          scale: [1, 1.12, 1],
-        }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-      >
-        $
-      </motion.div>
-
-      {/* Geometric shapes with parallax */}
-      <motion.div
-        className="absolute top-[35%] right-[20%] w-4 h-4 rounded-full"
-        style={{
-          background: 'rgba(124, 255, 178, 0.6)',
-          boxShadow: '0 0 30px rgba(124, 255, 178, 0.8)',
-          x: useTransform(mouseXSpring, (x) => x * -2),
-          y: useTransform(mouseYSpring, (y) => y * -2),
-        }}
-        animate={{ 
-          y: [0, -50, 0],
-          opacity: [0.4, 1, 0.4],
-        }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      />
-
-      <motion.div
-        className="absolute top-[50%] left-[25%] w-3 h-3 rounded-full"
-        style={{
-          background: 'rgba(94, 225, 230, 0.7)',
-          boxShadow: '0 0 25px rgba(94, 225, 230, 0.9)',
-          x: useTransform(mouseXSpring, (x) => x * 2.5),
-          y: useTransform(mouseYSpring, (y) => y * 2.5),
-        }}
-        animate={{ 
-          y: [0, 40, 0],
-          opacity: [0.5, 1, 0.5],
-        }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-      />
 
       {/* Content */}
       <motion.div

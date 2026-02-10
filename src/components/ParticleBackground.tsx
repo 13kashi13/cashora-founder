@@ -7,7 +7,7 @@ const ParticleBackground = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
     let animationId: number;
@@ -28,21 +28,35 @@ const ParticleBackground = () => {
     };
 
     const createParticles = () => {
-      // Reduced particle count for better performance
-      const count = Math.min(120, Math.floor(window.innerWidth / 12));
+      // Significantly reduced particle count for 60fps
+      const count = Math.min(60, Math.floor(window.innerWidth / 25));
       particles = Array.from({ length: count }, () => ({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.1,
-        vy: (Math.random() - 0.5) * 0.1,
-        size: Math.random() * 1.8 + 0.3,
-        opacity: Math.random() * 0.35 + 0.1,
-        twinkleSpeed: Math.random() * 0.012 + 0.006,
+        vx: (Math.random() - 0.5) * 0.08,
+        vy: (Math.random() - 0.5) * 0.08,
+        size: Math.random() * 1.5 + 0.3,
+        opacity: Math.random() * 0.25 + 0.1,
+        twinkleSpeed: Math.random() * 0.01 + 0.005,
         twinklePhase: Math.random() * Math.PI * 2,
       }));
     };
 
-    const animate = () => {
+    let lastTime = performance.now();
+    const targetFPS = 60;
+    const frameTime = 1000 / targetFPS;
+
+    const animate = (currentTime: number) => {
+      const deltaTime = currentTime - lastTime;
+
+      // Skip frame if not enough time has passed
+      if (deltaTime < frameTime) {
+        animationId = requestAnimationFrame(animate);
+        return;
+      }
+
+      lastTime = currentTime - (deltaTime % frameTime);
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       particles.forEach((p) => {
@@ -80,16 +94,18 @@ const ParticleBackground = () => {
 
     resize();
     createParticles();
-    animate();
+    animate(performance.now());
 
-    window.addEventListener("resize", () => {
+    const handleResize = () => {
       resize();
       createParticles();
-    });
+    };
+
+    window.addEventListener("resize", handleResize, { passive: true });
 
     return () => {
       cancelAnimationFrame(animationId);
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -97,7 +113,7 @@ const ParticleBackground = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.5 }}
+      style={{ opacity: 0.4 }}
     />
   );
 };
