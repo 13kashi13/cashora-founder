@@ -68,13 +68,18 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    /* Force compositing layer */
+    transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto; /* Disable to prevent conflicts with Lenis */
     /* Prevent layout shifts */
     overflow-x: hidden;
     overflow-y: scroll;
+    /* Force compositing */
+    transform: translateZ(0);
   }
 
   /* Prevent FOUC (Flash of Unstyled Content) */
@@ -281,6 +286,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* CRITICAL: Prevent layout reflows */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 /* Hardware acceleration for all animations */
 .animate-pulse-glow,
 .animate-spin-slow,
@@ -288,41 +300,45 @@
 .animate-shimmer,
 .animate-morph {
   will-change: transform;
-  transform: translateZ(0);
+  transform: translate3d(0, 0, 0);
   backface-visibility: hidden;
   perspective: 1000px;
 }
 
 /* Force GPU acceleration */
 body {
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
 }
 
 /* Optimize scrolling */
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto; /* Let Lenis handle smoothness */
   -webkit-overflow-scrolling: touch;
 }
 
 /* Optimize motion elements */
 [class*="motion-"] {
   will-change: transform, opacity;
-  transform: translateZ(0);
+  transform: translate3d(0, 0, 0);
 }
 
-/* Optimize framer-motion elements */
+/* Optimize framer-motion elements - CRITICAL */
 div[style*="transform"] {
   will-change: transform;
-  transform: translateZ(0);
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 /* Optimize canvas - prevent flickering */
 canvas {
   will-change: contents;
-  transform: translateZ(0);
+  transform: translate3d(0, 0, 0);
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
+  /* Prevent canvas from causing reflows */
+  position: fixed;
+  pointer-events: none;
 }
 
 /* Optimize SVG animations */
@@ -337,10 +353,11 @@ img, video, canvas {
   height: auto;
 }
 
-/* Prevent repaints on scroll */
+/* Prevent repaints on scroll - CRITICAL */
 .fixed {
   backface-visibility: hidden;
-  transform: translateZ(0);
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
 }
 
 /* Faster transitions */

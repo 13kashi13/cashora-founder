@@ -15,36 +15,6 @@ const HeroSection = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.92]);
 
-  // Simplified mouse parallax - only on desktop, using centralized RAF
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  
-  const springConfig = { damping: 30, stiffness: 100 };
-  const mouseXSpring = useSpring(mouseX, springConfig);
-  const mouseYSpring = useSpring(mouseY, springConfig);
-
-  useEffect(() => {
-    // Disable parallax on mobile for performance
-    if (window.innerWidth < 768) return;
-
-    let lastX = 0;
-    let lastY = 0;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      lastX = e.clientX;
-      lastY = e.clientY;
-      
-      const { innerWidth, innerHeight } = window;
-      mouseX.set((lastX - innerWidth / 2) / 80);
-      mouseY.set((lastY - innerHeight / 2) / 80);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, [mouseX, mouseY]);
-
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     e.preventDefault();
     smoothScrollToWithInertia(targetId);
