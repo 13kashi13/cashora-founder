@@ -18,14 +18,13 @@ const AnimatedGradientBg = () => {
         }}
       />
 
-      {/* Bottom glow - FIXED: Use 100% width instead of fixed 2000px */}
+      {/* Bottom glow - FIXED: Use 100% width constrained to viewport */}
       <div
         className="absolute"
         style={{
           bottom: "-30%",
           left: "50%",
-          width: "200vw",
-          maxWidth: "2000px",
+          width: "min(2000px, 100vw)",
           height: "1000px",
           transform: "translateX(-50%)",
           background:
