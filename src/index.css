@@ -71,13 +71,17 @@
     /* Force compositing layer */
     transform: translateZ(0);
     backface-visibility: hidden;
+    /* Prevent horizontal scroll */
+    overflow-x: hidden;
+    width: 100%;
   }
 
   html {
     scroll-behavior: auto; /* Disable to prevent conflicts with Lenis */
-    /* Prevent layout shifts */
+    /* Prevent layout shifts and horizontal scroll */
     overflow-x: hidden;
     overflow-y: scroll;
+    width: 100%;
     /* Force compositing */
     transform: translateZ(0);
   }
@@ -286,11 +290,18 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* CRITICAL: Prevent layout reflows */
+/* CRITICAL: Prevent layout reflows and horizontal scroll */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+/* Prevent horizontal scroll on all elements */
+body, html, #root {
+  overflow-x: hidden !important;
+  width: 100%;
+  max-width: 100vw;
 }
 
 /* Hardware acceleration for all animations */
