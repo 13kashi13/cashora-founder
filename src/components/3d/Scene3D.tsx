@@ -1,7 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { ScrollControls } from '@react-three/drei';
 import { Physics } from '@react-three/rapier';
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import ScrollCamera from './ScrollCamera';
 import PhysicsSandbox from './PhysicsSandbox';
 import MorphingVideoPanel from './MorphingVideoPanel';
@@ -15,11 +15,19 @@ import { AnimatePresence } from 'framer-motion';
 const Scene3D = () => {
   const prefersReducedMotion = useReducedMotion();
   const [isLoading, setIsLoading] = useState(true);
+  const [dpr, setDpr] = useState(1);
+  
+  // Stabilize DPR to prevent flickering
+  useEffect(() => {
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    setDpr(pixelRatio);
+  }, []);
   
   // Don't render 3D scene if user prefers reduced motion
   if (prefersReducedMotion) {
     return null;
   }
+  
   return (
     <>
       <AnimatePresence>
@@ -33,10 +41,16 @@ const Scene3D = () => {
             alpha: true,
             powerPreference: 'high-performance',
             stencil: true,
+            // Prevent flickering in production
+            preserveDrawingBuffer: false,
+            failIfMajorPerformanceCaveat: false,
           }}
-          dpr={[1, 2]}
+          dpr={dpr}
           camera={{ position: [0, 0, 10], fov: 50 }}
-          onCreated={() => {
+          frameloop="always"
+          onCreated={({ gl }) => {
+            // Stabilize canvas rendering
+            gl.setClearColor('#050a0a', 1);
             // Hide loading screen after canvas is ready
             setTimeout(() => setIsLoading(false), 500);
           }}

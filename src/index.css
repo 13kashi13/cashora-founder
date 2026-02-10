@@ -64,10 +64,26 @@
     @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, sans-serif;
     background-color: #050a0a;
+    /* Prevent flickering in production */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   html {
     scroll-behavior: smooth;
+    /* Prevent layout shifts */
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+
+  /* Prevent FOUC (Flash of Unstyled Content) */
+  html:not(.fonts-loaded) {
+    visibility: hidden;
+  }
+
+  html.fonts-loaded {
+    visibility: visible;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -301,15 +317,30 @@ div[style*="transform"] {
   transform: translateZ(0);
 }
 
-/* Optimize canvas */
+/* Optimize canvas - prevent flickering */
 canvas {
   will-change: contents;
   transform: translateZ(0);
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
 /* Optimize SVG animations */
 svg {
   will-change: auto;
+}
+
+/* Prevent layout shifts */
+img, video, canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevent repaints on scroll */
+.fixed {
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 /* Faster transitions */

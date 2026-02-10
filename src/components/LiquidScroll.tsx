@@ -25,9 +25,8 @@ const LiquidScroll = ({ children, className = '' }: LiquidScrollProps) => {
 
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,    // Shorter duration for snappier feel
+      duration: 1.2,
       easing: (t) => {
-        // Simpler easing for better performance
         return 1 - Math.pow(1 - t, 3);
       },
       orientation: 'vertical',
@@ -38,34 +37,33 @@ const LiquidScroll = ({ children, className = '' }: LiquidScrollProps) => {
       infinite: false,
     });
 
-    // Optimized scroll handler with throttling
+    // Single RAF loop - prevents flickering by consolidating updates
+    let rafId: number;
     let ticking = false;
     
     lenis.on('scroll', ({ velocity }: { velocity: number }) => {
       if (!ticking) {
-        window.requestAnimationFrame(() => {
-          // Ultra-subtle effects (barely noticeable but adds feel)
-          const skewAmount = Math.max(-0.15, Math.min(0.15, velocity * 0.008));
-          skewY.set(skewAmount);
+        // Ultra-subtle effects (barely noticeable but adds feel)
+        const skewAmount = Math.max(-0.15, Math.min(0.15, velocity * 0.008));
+        skewY.set(skewAmount);
 
-          const scaleAmount = 1 + Math.max(-0.001, Math.min(0.001, Math.abs(velocity) * 0.00004));
-          scaleY.set(scaleAmount);
-          
-          ticking = false;
-        });
-        ticking = true;
+        const scaleAmount = 1 + Math.max(-0.001, Math.min(0.001, Math.abs(velocity) * 0.00004));
+        scaleY.set(scaleAmount);
+        
+        ticking = false;
       }
     });
 
     function raf(time: number) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
       lenis.destroy();
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, [skewY, scaleY]);
 

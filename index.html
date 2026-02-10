@@ -3,6 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Prevent flickering in production -->
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#050a0a" />
+    
+    <!-- Preconnect to font sources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
     <title>Cashora — AI Content Automation for Passive Income</title>
     <meta name="description" content="Turn a single prompt into videos and publish them everywhere with one click. AI-powered content automation." />
     <meta name="author" content="Cashora" />
@@ -15,6 +24,34 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@Lovable" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    
+    <!-- Inline critical CSS to prevent FOUC -->
+    <style>
+      html {
+        background-color: #050a0a;
+        overflow-x: hidden;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #050a0a;
+        color: #f5f5f5;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      #root {
+        min-height: 100vh;
+        background-color: #050a0a;
+      }
+      /* Prevent flash of white */
+      html:not(.fonts-loaded) body {
+        opacity: 0;
+      }
+      html.fonts-loaded body {
+        opacity: 1;
+        transition: opacity 0.1s ease-in;
+      }
+    </style>
   </head>
 
   <body>

@@ -7,7 +7,10 @@ const ParticleBackground = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d", { alpha: true });
+    const ctx = canvas.getContext("2d", { 
+      alpha: true,
+      desynchronized: true, // Prevents flickering in production
+    });
     if (!ctx) return;
 
     let animationId: number;
@@ -23,16 +26,20 @@ const ParticleBackground = () => {
     }> = [];
 
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      ctx.scale(dpr, dpr);
     };
 
     const createParticles = () => {
       // Significantly reduced particle count for 60fps
       const count = Math.min(60, Math.floor(window.innerWidth / 25));
       particles = Array.from({ length: count }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
         vx: (Math.random() - 0.5) * 0.08,
         vy: (Math.random() - 0.5) * 0.08,
         size: Math.random() * 1.5 + 0.3,
@@ -57,7 +64,7 @@ const ParticleBackground = () => {
 
       lastTime = currentTime - (deltaTime % frameTime);
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
       particles.forEach((p) => {
         // Slow floating movement
@@ -65,10 +72,10 @@ const ParticleBackground = () => {
         p.y += p.vy;
 
         // Wrap around edges
-        if (p.x < 0) p.x = canvas.width;
-        if (p.x > canvas.width) p.x = 0;
-        if (p.y < 0) p.y = canvas.height;
-        if (p.y > canvas.height) p.y = 0;
+        if (p.x < 0) p.x = window.innerWidth;
+        if (p.x > window.innerWidth) p.x = 0;
+        if (p.y < 0) p.y = window.innerHeight;
+        if (p.y > window.innerHeight) p.y = 0;
 
         // Twinkle effect
         p.twinklePhase += p.twinkleSpeed;
@@ -104,7 +111,7 @@ const ParticleBackground = () => {
     window.addEventListener("resize", handleResize, { passive: true });
 
     return () => {
-      cancelAnimationFrame(animationId);
+      if (animationId) cancelAnimationFrame(animationId);
       window.removeEventListener("resize", handleResize);
     };
   }, []);
