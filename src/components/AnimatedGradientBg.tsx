@@ -18,15 +18,14 @@ const AnimatedGradientBg = () => {
         }}
       />
 
-      {/* Bottom glow - FIXED: Use 100% width constrained to viewport */}
+      {/* Bottom glow - FIXED: Use 100% instead of 100vw to avoid scrollbar issues */}
       <div
         className="absolute"
         style={{
           bottom: "-30%",
-          left: "50%",
-          width: "min(2000px, 100vw)",
+          left: "0",
+          right: "0",
           height: "1000px",
-          transform: "translateX(-50%)",
           background:
             "radial-gradient(ellipse at center, rgba(124, 255, 178, 0.2) 0%, rgba(94, 225, 230, 0.15) 30%, transparent 60%)",
           filter: "blur(120px)",

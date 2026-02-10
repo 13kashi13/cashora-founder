@@ -71,9 +71,10 @@
     /* Force compositing layer */
     transform: translateZ(0);
     backface-visibility: hidden;
-    /* Prevent horizontal scroll */
+    /* Prevent horizontal scroll - use 100% not 100vw */
     overflow-x: hidden;
     width: 100%;
+    max-width: 100%;
   }
 
   html {
@@ -82,6 +83,7 @@
     overflow-x: hidden;
     overflow-y: scroll;
     width: 100%;
+    max-width: 100%;
     /* Force compositing */
     transform: translateZ(0);
   }
@@ -297,10 +299,16 @@
   box-sizing: border-box;
 }
 
-/* Prevent horizontal scroll on all elements */
+/* Prevent horizontal scroll on all elements - NEVER use 100vw */
 body, html, #root {
   overflow-x: hidden !important;
   width: 100%;
+  max-width: 100%;
+}
+
+/* Ensure all containers respect viewport width */
+.fixed, .absolute {
+  max-width: 100%;
 }
 
 /* Hardware acceleration for all animations */
