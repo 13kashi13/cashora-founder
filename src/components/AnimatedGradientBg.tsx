@@ -1,12 +1,14 @@
 const AnimatedGradientBg = () => {
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" style={{ backgroundColor: '#050a0a' }}>
+    <div className="fixed inset-0 pointer-events-none z-0" style={{ backgroundColor: '#050a0a', overflow: 'hidden' }}>
       {/* Central glow - SIMPLIFIED */}
       <div
-        className="absolute w-[400px] h-[400px]"
+        className="absolute"
         style={{
           top: "50%",
           left: "50%",
+          width: "400px",
+          height: "400px",
           transform: "translate(-50%, -50%)",
           background:
             "radial-gradient(circle, rgba(124, 255, 178, 0.3) 0%, rgba(168, 255, 224, 0.2) 25%, rgba(94, 225, 230, 0.1) 50%, transparent 70%)",
@@ -16,12 +18,15 @@ const AnimatedGradientBg = () => {
         }}
       />
 
-      {/* Bottom glow */}
+      {/* Bottom glow - FIXED: Use 100% width instead of fixed 2000px */}
       <div
-        className="absolute w-[2000px] h-[1000px]"
+        className="absolute"
         style={{
           bottom: "-30%",
           left: "50%",
+          width: "200vw",
+          maxWidth: "2000px",
+          height: "1000px",
           transform: "translateX(-50%)",
           background:
             "radial-gradient(ellipse at center, rgba(124, 255, 178, 0.2) 0%, rgba(94, 225, 230, 0.15) 30%, transparent 60%)",
