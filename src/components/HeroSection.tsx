@@ -15,7 +15,7 @@ const HeroSection = () => {
   const opacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.92]);
 
-  // Simplified mouse parallax - only on desktop, throttled
+  // Simplified mouse parallax - only on desktop, using centralized RAF
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   
@@ -27,28 +27,21 @@ const HeroSection = () => {
     // Disable parallax on mobile for performance
     if (window.innerWidth < 768) return;
 
-    let rafId: number;
     let lastX = 0;
     let lastY = 0;
 
     const handleMouseMove = (e: MouseEvent) => {
       lastX = e.clientX;
       lastY = e.clientY;
-
-      if (rafId) return;
-
-      rafId = requestAnimationFrame(() => {
-        const { innerWidth, innerHeight } = window;
-        mouseX.set((lastX - innerWidth / 2) / 80); // Reduced intensity
-        mouseY.set((lastY - innerHeight / 2) / 80);
-        rafId = 0;
-      });
+      
+      const { innerWidth, innerHeight } = window;
+      mouseX.set((lastX - innerWidth / 2) / 80);
+      mouseY.set((lastY - innerHeight / 2) / 80);
     };
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
-      if (rafId) cancelAnimationFrame(rafId);
     };
   }, [mouseX, mouseY]);
 

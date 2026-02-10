@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
 import { motion, useSpring } from 'framer-motion';
+import { rafManager } from '@/lib/rafManager';
 
 interface LiquidScrollProps {
   children: React.ReactNode;
@@ -9,14 +10,15 @@ interface LiquidScrollProps {
 
 const LiquidScroll = ({ children, className = '' }: LiquidScrollProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const lenisRef = useRef<Lenis | null>(null);
   
   // Optimized spring physics - less aggressive for better performance
   const springConfig = { 
-    damping: 30,      // Higher damping = less bounce, smoother
-    stiffness: 150,   // Lower stiffness = softer response
-    mass: 0.5,        // Lower mass = more responsive
-    restSpeed: 0.01,  // Faster settling
-    restDelta: 0.01   // Faster settling
+    damping: 30,
+    stiffness: 150,
+    mass: 0.5,
+    restSpeed: 0.01,
+    restDelta: 0.01
   };
   
   // Very subtle motion values
@@ -26,9 +28,7 @@ const LiquidScroll = ({ children, className = '' }: LiquidScrollProps) => {
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
-      easing: (t) => {
-        return 1 - Math.pow(1 - t, 3);
-      },
+      easing: (t) => 1 - Math.pow(1 - t, 3),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
@@ -37,33 +37,26 @@ const LiquidScroll = ({ children, className = '' }: LiquidScrollProps) => {
       infinite: false,
     });
 
-    // Single RAF loop - prevents flickering by consolidating updates
-    let rafId: number;
-    let ticking = false;
+    lenisRef.current = lenis;
     
     lenis.on('scroll', ({ velocity }: { velocity: number }) => {
-      if (!ticking) {
-        // Ultra-subtle effects (barely noticeable but adds feel)
-        const skewAmount = Math.max(-0.15, Math.min(0.15, velocity * 0.008));
-        skewY.set(skewAmount);
+      // Ultra-subtle effects
+      const skewAmount = Math.max(-0.15, Math.min(0.15, velocity * 0.008));
+      skewY.set(skewAmount);
 
-        const scaleAmount = 1 + Math.max(-0.001, Math.min(0.001, Math.abs(velocity) * 0.00004));
-        scaleY.set(scaleAmount);
-        
-        ticking = false;
-      }
+      const scaleAmount = 1 + Math.max(-0.001, Math.min(0.001, Math.abs(velocity) * 0.00004));
+      scaleY.set(scaleAmount);
     });
 
-    function raf(time: number) {
+    // Register with centralized RAF manager
+    rafManager.register('lenis', (time) => {
       lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    }
-
-    rafId = requestAnimationFrame(raf);
+    });
 
     return () => {
+      rafManager.unregister('lenis');
       lenis.destroy();
-      if (rafId) cancelAnimationFrame(rafId);
+      lenisRef.current = null;
     };
   }, [skewY, scaleY]);
 

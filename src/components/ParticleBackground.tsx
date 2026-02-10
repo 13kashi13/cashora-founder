@@ -1,7 +1,19 @@
 import { useEffect, useRef } from "react";
+import { rafManager } from "@/lib/rafManager";
 
 const ParticleBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particlesRef = useRef<Array<{
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    size: number;
+    opacity: number;
+    twinkleSpeed: number;
+    twinklePhase: number;
+  }>>([]);
+  const lastTimeRef = useRef(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -9,21 +21,9 @@ const ParticleBackground = () => {
 
     const ctx = canvas.getContext("2d", { 
       alpha: true,
-      desynchronized: true, // Prevents flickering in production
+      desynchronized: true,
     });
     if (!ctx) return;
-
-    let animationId: number;
-    let particles: Array<{
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-      opacity: number;
-      twinkleSpeed: number;
-      twinklePhase: number;
-    }> = [];
 
     const resize = () => {
       const dpr = window.devicePixelRatio || 1;
@@ -35,9 +35,8 @@ const ParticleBackground = () => {
     };
 
     const createParticles = () => {
-      // Significantly reduced particle count for 60fps
       const count = Math.min(60, Math.floor(window.innerWidth / 25));
-      particles = Array.from({ length: count }, () => ({
+      particlesRef.current = Array.from({ length: count }, () => ({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
         vx: (Math.random() - 0.5) * 0.08,
@@ -49,59 +48,44 @@ const ParticleBackground = () => {
       }));
     };
 
-    let lastTime = performance.now();
     const targetFPS = 60;
     const frameTime = 1000 / targetFPS;
 
-    const animate = (currentTime: number) => {
-      const deltaTime = currentTime - lastTime;
-
-      // Skip frame if not enough time has passed
-      if (deltaTime < frameTime) {
-        animationId = requestAnimationFrame(animate);
-        return;
-      }
-
-      lastTime = currentTime - (deltaTime % frameTime);
+    const animate = (time: number, delta: number) => {
+      // Throttle to 60fps
+      if (delta < frameTime) return;
 
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-      particles.forEach((p) => {
-        // Slow floating movement
+      particlesRef.current.forEach((p) => {
         p.x += p.vx;
         p.y += p.vy;
 
-        // Wrap around edges
         if (p.x < 0) p.x = window.innerWidth;
         if (p.x > window.innerWidth) p.x = 0;
         if (p.y < 0) p.y = window.innerHeight;
         if (p.y > window.innerHeight) p.y = 0;
 
-        // Twinkle effect
         p.twinklePhase += p.twinkleSpeed;
         const twinkle = Math.sin(p.twinklePhase) * 0.5 + 0.5;
         const currentOpacity = p.opacity * twinkle;
 
-        // Draw star-like particle
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         
-        // Green/cyan tint for some particles
         const isGreen = Math.random() > 0.7;
-        if (isGreen) {
-          ctx.fillStyle = `hsla(158, 100%, 73%, ${currentOpacity})`;
-        } else {
-          ctx.fillStyle = `hsla(180, 20%, 80%, ${currentOpacity})`;
-        }
+        ctx.fillStyle = isGreen 
+          ? `hsla(158, 100%, 73%, ${currentOpacity})`
+          : `hsla(180, 20%, 80%, ${currentOpacity})`;
         ctx.fill();
       });
-
-      animationId = requestAnimationFrame(animate);
     };
 
     resize();
     createParticles();
-    animate(performance.now());
+
+    // Register with centralized RAF manager
+    rafManager.register('particles', animate);
 
     const handleResize = () => {
       resize();
@@ -111,7 +95,7 @@ const ParticleBackground = () => {
     window.addEventListener("resize", handleResize, { passive: true });
 
     return () => {
-      if (animationId) cancelAnimationFrame(animationId);
+      rafManager.unregister('particles');
       window.removeEventListener("resize", handleResize);
     };
   }, []);

@@ -13,6 +13,7 @@ import AnimatedGradientBg from "./components/AnimatedGradientBg";
 import ParticleBackground from "./components/ParticleBackground";
 import LiquidScroll from "./components/LiquidScroll";
 import Navbar from "./components/Navbar";
+import RAFDebug from "./components/RAFDebug";
 import { AuthProvider } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <RAFDebug />
         <BrowserRouter>
           <LiquidScroll>
             <AnimatedGradientBg />
