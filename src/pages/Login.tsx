@@ -1,19 +1,10 @@
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/SupabaseAuthContext";
 import { useState, FormEvent } from "react";
 import { toast } from "sonner";
-import { 
-  SiYoutube, 
-  SiInstagram, 
-  SiTiktok, 
-  SiFacebook, 
-  SiX,
-  SiLinkedin,
-  SiSnapchat,
-  SiPinterest
-} from 'react-icons/si';
+import ScrollingPlatforms from "@/components/OrbitingPlatforms";
 
 const Login = () => {
   const { signInWithGoogle, signInWithGithub, signInWithEmail } = useAuth();
@@ -27,7 +18,7 @@ const Login = () => {
       setLoading(true);
       await signInWithGoogle();
       toast.success("Successfully signed in with Google!");
-      navigate("/");
+      navigate("/onboarding");
     } catch (error: any) {
       toast.error(error.message || "Failed to sign in with Google");
     } finally {
@@ -40,7 +31,7 @@ const Login = () => {
       setLoading(true);
       await signInWithGithub();
       toast.success("Successfully signed in with GitHub!");
-      navigate("/");
+      navigate("/onboarding");
     } catch (error: any) {
       toast.error(error.message || "Failed to sign in with GitHub");
     } finally {
@@ -54,7 +45,7 @@ const Login = () => {
       setLoading(true);
       await signInWithEmail(email, password);
       toast.success("Successfully signed in!");
-      navigate("/");
+      navigate("/onboarding");
     } catch (error: any) {
       toast.error(error.message || "Failed to sign in");
     } finally {
@@ -62,16 +53,10 @@ const Login = () => {
     }
   };
 
-  const platforms = [
-    SiYoutube, SiInstagram, SiTiktok, SiFacebook, 
-    SiX, SiLinkedin, SiSnapchat, SiPinterest
-  ];
-  const allPlatforms = [...platforms, ...platforms, ...platforms];
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12">
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 pt-32 relative z-10">
       <motion.div
-        className="w-full max-w-md backdrop-blur-2xl rounded-3xl p-8"
+        className="w-full max-w-md backdrop-blur-2xl rounded-3xl p-8 relative z-20"
         style={{
           background: 'rgba(5, 10, 10, 0.6)',
           border: '1px solid rgba(124, 255, 178, 0.3)',
@@ -227,59 +212,9 @@ const Login = () => {
         </p>
       </motion.div>
 
-      {/* Logo Loop */}
+      {/* Scrolling Platform Icons */}
       <div className="w-full max-w-4xl mt-12">
-        <p className="text-center text-xs font-bold uppercase tracking-wider mb-6" style={{ color: 'rgba(124, 255, 178, 0.6)' }}>
-          PUBLISH TO ALL PLATFORMS
-        </p>
-        
-        <div className="relative h-16 overflow-hidden">
-          {/* Fade edges */}
-          <div 
-            className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
-            style={{
-              background: 'linear-gradient(to right, #050a0a, transparent)',
-            }}
-          />
-          <div 
-            className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
-            style={{
-              background: 'linear-gradient(to left, #050a0a, transparent)',
-            }}
-          />
-
-          {/* Scrolling logos */}
-          <motion.div
-            className="flex gap-8 absolute"
-            animate={{
-              x: [0, -33.333 + "%"],
-            }}
-            transition={{
-              x: {
-                repeat: Infinity,
-                repeatType: "loop",
-                duration: 20,
-                ease: "linear",
-              },
-            }}
-          >
-            {allPlatforms.map((Icon, index) => (
-              <div
-                key={index}
-                className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-lg"
-                style={{
-                  background: 'rgba(124, 255, 178, 0.05)',
-                  border: '1px solid rgba(124, 255, 178, 0.2)',
-                }}
-              >
-                <Icon 
-                  className="w-6 h-6"
-                  style={{ color: 'rgba(255, 255, 255, 0.5)' }}
-                />
-              </div>
-            ))}
-          </motion.div>
-        </div>
+        <ScrollingPlatforms duration={20} />
       </div>
     </div>
   );

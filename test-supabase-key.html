@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Supabase Key</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+        }
+        .result {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .success { background: #1a4d1a; border: 1px solid #2d7a2d; }
+        .error { background: #4d1a1a; border: 1px solid #7a2d2d; }
+        .info { background: #1a1a4d; border: 1px solid #2d2d7a; }
+        button {
+            background: #2d7a2d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background: #3d8a3d; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Supabase Key Tester</h1>
+    
+    <div class="result info">
+        <h3>Current Configuration:</h3>
+        <p>URL: https://hyzpywpnfvifftzhjvxo.supabase.co</p>
+        <p>Key: sb_publishable_ho7f0rMVCSYrKPeB7-eT0A_ujXeG4WR</p>
+        <p>Key Length: 47 characters</p>
+    </div>
+
+    <button onclick="testConnection()">Test Connection</button>
+
+    <div id="results"></div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        window.testConnection = async function() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<div class="result info">Testing...</div>';
+
+            const supabaseUrl = 'https://hyzpywpnfvifftzhjvxo.supabase.co';
+            const supabaseKey = 'sb_publishable_ho7f0rMVCSYrKPeB7-eT0A_ujXeG4WR';
+
+            try {
+                const supabase = createClient(supabaseUrl, supabaseKey);
+                
+                // Test 1: Check if client was created
+                resultsDiv.innerHTML += '<div class="result success">✅ Supabase client created</div>';
+
+                // Test 2: Try to query database
+                const { data, error } = await supabase.from('users').select('count');
+                
+                if (error) {
+                    resultsDiv.innerHTML += `<div class="result error">
+                        <h3>❌ Database Query Failed</h3>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Code:</strong> ${error.code || 'N/A'}</p>
+                        <p><strong>Details:</strong> ${error.details || 'N/A'}</p>
+                        <p><strong>Hint:</strong> ${error.hint || 'N/A'}</p>
+                    </div>`;
+
+                    if (error.message.includes('Invalid API key')) {
+                        resultsDiv.innerHTML += `<div class="result error">
+                            <h3>🔑 Key Issue Detected</h3>
+                            <p>Your publishable key appears to be invalid or incomplete.</p>
+                            <p><strong>What to do:</strong></p>
+                            <ol>
+                                <li>Go to Supabase Dashboard</li>
+                                <li>Click Settings → API</li>
+                                <li>Find "Publishable key" (NOT service_role key)</li>
+                                <li>Copy the COMPLETE key</li>
+                                <li>Update .env file</li>
+                            </ol>
+                        </div>`;
+                    }
+                } else {
+                    resultsDiv.innerHTML += `<div class="result success">
+                        <h3>✅ Database Connection Successful!</h3>
+                        <p>Your Supabase key is working correctly.</p>
+                        <p>The blank screen issue is caused by something else.</p>
+                    </div>`;
+                }
+
+                // Test 3: Check auth
+                const { data: sessionData, error: authError } = await supabase.auth.getSession();
+                
+                if (authError) {
+                    resultsDiv.innerHTML += `<div class="result error">
+                        <h3>❌ Auth Check Failed</h3>
+                        <p>${authError.message}</p>
+                    </div>`;
+                } else {
+                    resultsDiv.innerHTML += `<div class="result success">
+                        <h3>✅ Auth System Working</h3>
+                        <p>Session: ${sessionData.session ? 'Active' : 'None (not logged in)'}</p>
+                    </div>`;
+                }
+
+            } catch (err) {
+                resultsDiv.innerHTML += `<div class="result error">
+                    <h3>❌ Connection Failed</h3>
+                    <p>${err.message}</p>
+                    <p><strong>This usually means:</strong></p>
+                    <ul>
+                        <li>Network issue</li>
+                        <li>Wrong Supabase URL</li>
+                        <li>CORS issue</li>
+                    </ul>
+                </div>`;
+            }
+        };
+    </script>
+</body>
+</html>

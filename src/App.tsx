@@ -8,41 +8,151 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import FirebaseTest from "./pages/FirebaseTest";
+import SupabaseTest from "./pages/SupabaseTest";
+import DebugSupabase from "./pages/DebugSupabase";
 import Profile from "./pages/Profile";
+import Dashboard from "./pages/Dashboard";
+import Onboarding from "./pages/Onboarding";
+import VideoGenerator from "./pages/VideoGenerator";
+import ContentLibrary from "./pages/ContentLibrary";
+import Analytics from "./pages/Analytics";
+import Platforms from "./pages/Platforms";
+import Settings from "./pages/Settings";
+import Recommendations from "./pages/Recommendations";
+import ProtectedRoute from "./components/ProtectedRoute";
 import AnimatedGradientBg from "./components/AnimatedGradientBg";
 import ParticleBackground from "./components/ParticleBackground";
 import LiquidScroll from "./components/LiquidScroll";
 import Navbar from "./components/Navbar";
 import RAFDebug from "./components/RAFDebug";
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider } from "./contexts/SupabaseAuthContext";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
         <Toaster />
         <Sonner />
         <RAFDebug />
         <BrowserRouter>
-          <LiquidScroll>
-            <AnimatedGradientBg />
-            <ParticleBackground />
-            <Navbar />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/firebase-test" element={<FirebaseTest />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </LiquidScroll>
+          <Routes>
+            {/* Public routes with landing page styling */}
+            <Route
+              path="/"
+              element={
+                <LiquidScroll>
+                  <AnimatedGradientBg />
+                  <ParticleBackground />
+                  <Navbar />
+                  <Index />
+                </LiquidScroll>
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <LiquidScroll>
+                  <AnimatedGradientBg />
+                  <ParticleBackground />
+                  <Navbar />
+                  <Login />
+                </LiquidScroll>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <LiquidScroll>
+                  <AnimatedGradientBg />
+                  <ParticleBackground />
+                  <Navbar />
+                  <Signup />
+                </LiquidScroll>
+              }
+            />
+
+            {/* Protected dashboard routes (no landing page styling) */}
+            <Route
+              path="/onboarding"
+              element={
+                <ProtectedRoute>
+                  <Onboarding />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/create"
+              element={
+                <ProtectedRoute>
+                  <VideoGenerator />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/library"
+              element={
+                <ProtectedRoute>
+                  <ContentLibrary />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/analytics"
+              element={
+                <ProtectedRoute>
+                  <Analytics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/platforms"
+              element={
+                <ProtectedRoute>
+                  <Platforms />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/recommendations"
+              element={
+                <ProtectedRoute>
+                  <Recommendations />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Legacy routes */}
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/firebase-test" element={<FirebaseTest />} />
+            <Route path="/supabase-test" element={<SupabaseTest />} />
+            <Route path="/debug" element={<DebugSupabase />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

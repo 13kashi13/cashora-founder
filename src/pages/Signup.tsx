@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/SupabaseAuthContext";
 import { useState, FormEvent } from "react";
 import { toast } from "sonner";
+import ScrollingPlatforms from "@/components/OrbitingPlatforms";
 
 const Signup = () => {
   const { signInWithGoogle, signInWithGithub, signUpWithEmail } = useAuth();
@@ -18,7 +19,7 @@ const Signup = () => {
       setLoading(true);
       await signInWithGoogle();
       toast.success("Successfully signed up with Google!");
-      navigate("/");
+      navigate("/onboarding");
     } catch (error: any) {
       toast.error(error.message || "Failed to sign up with Google");
     } finally {
@@ -31,7 +32,7 @@ const Signup = () => {
       setLoading(true);
       await signInWithGithub();
       toast.success("Successfully signed up with GitHub!");
-      navigate("/");
+      navigate("/onboarding");
     } catch (error: any) {
       toast.error(error.message || "Failed to sign up with GitHub");
     } finally {
@@ -45,7 +46,7 @@ const Signup = () => {
       setLoading(true);
       await signUpWithEmail(email, password);
       toast.success("Account created successfully!");
-      navigate("/");
+      navigate("/onboarding");
     } catch (error: any) {
       toast.error(error.message || "Failed to create account");
     } finally {
@@ -54,9 +55,9 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-6">
+    <div className="min-h-screen flex flex-col items-center justify-center px-6 py-12 pt-32 relative z-10">
       <motion.div
-        className="w-full max-w-md backdrop-blur-2xl rounded-3xl p-8"
+        className="w-full max-w-md backdrop-blur-2xl rounded-3xl p-8 relative z-20"
         style={{
           background: 'rgba(5, 10, 10, 0.6)',
           border: '1px solid rgba(124, 255, 178, 0.3)',
@@ -231,6 +232,11 @@ const Signup = () => {
           </Link>
         </p>
       </motion.div>
+
+      {/* Scrolling Platform Icons */}
+      <div className="w-full max-w-4xl mt-12">
+        <ScrollingPlatforms duration={20} />
+      </div>
     </div>
   );
 };

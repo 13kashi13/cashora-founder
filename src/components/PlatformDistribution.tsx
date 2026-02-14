@@ -22,6 +22,34 @@ const PlatformDistribution = () => {
   });
   const bgY = useTransform(scrollYProgress, [0, 1], [80, -80]);
 
+  // Animated graph data for each platform - creative visualizations
+  const graphData = [
+    { 
+      platform: 'YouTube', 
+      values: [20, 35, 45, 60, 75, 85], 
+      color: '0 70% 55%',
+      type: 'wave' // Wave animation
+    },
+    { 
+      platform: 'Instagram', 
+      values: [15, 30, 50, 65, 80, 90], 
+      color: '330 80% 55%',
+      type: 'pulse' // Pulse animation
+    },
+    { 
+      platform: 'Twitter', 
+      values: [25, 40, 55, 70, 82, 92], 
+      color: '200 80% 60%',
+      type: 'bounce' // Bounce animation
+    },
+    { 
+      platform: 'LinkedIn', 
+      values: [25, 40, 55, 70, 80, 88], 
+      color: '210 80% 55%',
+      type: 'slide' // Slide animation
+    },
+  ];
+
   return (
     <section className="section-spacing relative overflow-hidden" ref={sectionRef}>
       <div className="section-line absolute top-0 left-0 right-0" />
@@ -183,6 +211,170 @@ const PlatformDistribution = () => {
         >
           Reach audiences across YouTube, Instagram, Facebook, X, LinkedIn, Reddit, and Discord — from a single dashboard.
         </motion.p>
+
+        {/* Creative Animated Stats Cards */}
+        <motion.div
+          className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6"
+          initial={{ opacity: 0, y: 30 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 1.8 }}
+        >
+          {graphData.map((data, index) => (
+            <motion.div
+              key={data.platform}
+              className="relative group"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={isVisible ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.6, delay: 2 + index * 0.15, type: 'spring' }}
+            >
+              {/* Card container */}
+              <motion.div
+                className="glass-card p-6 rounded-2xl relative overflow-hidden"
+                whileHover={{ scale: 1.05, y: -8 }}
+                transition={{ duration: 0.3 }}
+              >
+                {/* Animated gradient background */}
+                <motion.div
+                  className="absolute inset-0"
+                  style={{
+                    background: `radial-gradient(circle at 50% 120%, hsl(${data.color} / 0.2), transparent 70%)`,
+                  }}
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.6, 0.3],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    delay: index * 0.5,
+                  }}
+                />
+
+                {/* Content */}
+                <div className="relative z-10">
+                  {/* Platform name with pulse dot */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <motion.div
+                      className="w-2 h-2 rounded-full"
+                      style={{ background: `hsl(${data.color})` }}
+                      animate={{
+                        scale: [1, 1.5, 1],
+                        opacity: [0.5, 1, 0.5],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: index * 0.3,
+                      }}
+                    />
+                    <p className="text-sm font-bold" style={{ color: `hsl(${data.color})` }}>
+                      {data.platform}
+                    </p>
+                  </div>
+
+                  {/* Animated wave/line graph */}
+                  <div className="h-24 mb-4 relative">
+                    <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                      {/* Gradient definition */}
+                      <defs>
+                        <linearGradient id={`gradient-${index}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                          <stop offset="0%" style={{ stopColor: `hsl(${data.color})`, stopOpacity: 0.8 }} />
+                          <stop offset="100%" style={{ stopColor: `hsl(${data.color})`, stopOpacity: 0.1 }} />
+                        </linearGradient>
+                      </defs>
+
+                      {/* Animated area */}
+                      <motion.path
+                        d={`M 0 ${100 - data.values[0]} 
+                            L ${100 / 5} ${100 - data.values[1]} 
+                            L ${(100 / 5) * 2} ${100 - data.values[2]} 
+                            L ${(100 / 5) * 3} ${100 - data.values[3]} 
+                            L ${(100 / 5) * 4} ${100 - data.values[4]} 
+                            L 100 ${100 - data.values[5]} 
+                            L 100 100 L 0 100 Z`}
+                        fill={`url(#gradient-${index})`}
+                        initial={{ pathLength: 0, opacity: 0 }}
+                        animate={isVisible ? { pathLength: 1, opacity: 1 } : {}}
+                        transition={{ duration: 1.5, delay: 2.3 + index * 0.15, ease: 'easeOut' }}
+                      />
+
+                      {/* Animated line */}
+                      <motion.path
+                        d={`M 0 ${100 - data.values[0]} 
+                            L ${100 / 5} ${100 - data.values[1]} 
+                            L ${(100 / 5) * 2} ${100 - data.values[2]} 
+                            L ${(100 / 5) * 3} ${100 - data.values[3]} 
+                            L ${(100 / 5) * 4} ${100 - data.values[4]} 
+                            L 100 ${100 - data.values[5]}`}
+                        stroke={`hsl(${data.color})`}
+                        strokeWidth="2"
+                        fill="none"
+                        initial={{ pathLength: 0 }}
+                        animate={isVisible ? { pathLength: 1 } : {}}
+                        transition={{ duration: 1.5, delay: 2.3 + index * 0.15, ease: 'easeOut' }}
+                      />
+
+                      {/* Animated dots on line */}
+                      {data.values.map((value, i) => (
+                        <motion.circle
+                          key={i}
+                          cx={(100 / 5) * i}
+                          cy={100 - value}
+                          r="2"
+                          fill={`hsl(${data.color})`}
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={isVisible ? { scale: 1, opacity: 1 } : {}}
+                          transition={{ 
+                            duration: 0.3, 
+                            delay: 2.5 + index * 0.15 + i * 0.1,
+                            type: 'spring',
+                            stiffness: 200,
+                          }}
+                        />
+                      ))}
+                    </svg>
+                  </div>
+
+                  {/* Growth percentage with counter animation */}
+                  <motion.div
+                    className="flex items-center justify-between"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={isVisible ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.5, delay: 3 + index * 0.15 }}
+                  >
+                    <span className="text-xs text-muted-foreground">Growth</span>
+                    <motion.span
+                      className="text-lg font-black"
+                      style={{ color: `hsl(${data.color})` }}
+                      initial={{ scale: 0 }}
+                      animate={isVisible ? { scale: 1 } : {}}
+                      transition={{ 
+                        duration: 0.5, 
+                        delay: 3.2 + index * 0.15,
+                        type: 'spring',
+                        stiffness: 200,
+                      }}
+                    >
+                      +{data.values[data.values.length - 1]}%
+                    </motion.span>
+                  </motion.div>
+                </div>
+
+                {/* Hover glow effect */}
+                <motion.div
+                  className="absolute inset-0 rounded-2xl pointer-events-none"
+                  style={{
+                    boxShadow: `0 0 0px hsl(${data.color} / 0)`,
+                  }}
+                  whileHover={{
+                    boxShadow: `0 0 40px hsl(${data.color} / 0.4)`,
+                  }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.div>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

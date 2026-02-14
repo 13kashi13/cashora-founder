@@ -53,6 +53,7 @@ const TeamSection = () => {
 
   return (
     <section 
+      id="team"
       ref={ref}
       className="relative py-32 px-6 overflow-hidden bg-gradient-to-b from-background via-violet-950/5 to-background"
     >

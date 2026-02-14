@@ -1,13 +1,10 @@
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Camera, Save, User, Mail, AtSign, FileText } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/SupabaseAuthContext";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { updateProfile } from "firebase/auth";
-import { db, storage } from "@/lib/firebase";
+import { supabase } from "@/lib/supabase";
 
 interface UserProfile {
   displayName: string;

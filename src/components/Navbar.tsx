@@ -1,7 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Sparkles, LogOut, Menu, X } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { LogOut, Menu, X } from "lucide-react";
+import { useAuth } from "@/contexts/SupabaseAuthContext";
 import { toast } from "sonner";
 import { useState } from "react";
 
@@ -47,6 +47,8 @@ const Navbar = () => {
         WebkitBackdropFilter: 'blur(40px) saturate(180%)',
         borderBottom: `1px solid rgba(124, 255, 178, ${borderOpacity})`,
         boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 80px rgba(124, 255, 178, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+        willChange: 'background-color, border-color',
+        transform: 'translateZ(0)',
       }}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -66,25 +68,20 @@ const Navbar = () => {
           {/* Logo Section - Clickable */}
           <motion.div 
             onClick={handleLogoClick}
-            className="flex items-center gap-3 group cursor-pointer"
+            className="flex items-center group cursor-pointer"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
             <motion.div
-              className="relative"
-              whileHover={{ scale: 1.1, rotate: 180 }}
-              transition={{ duration: 0.6 }}
+              className="relative flex items-center"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.3 }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-[#7CFFB2] to-[#5CE1E6] rounded-full blur-xl opacity-50 group-hover:opacity-100 transition-opacity" />
-              <div 
-                className="relative w-12 h-12 rounded-full flex items-center justify-center"
-                style={{
-                  background: 'linear-gradient(135deg, #7CFFB2 0%, #5CE1E6 100%)',
-                  boxShadow: '0 0 20px rgba(124, 255, 178, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
-                }}
-              >
-                <Sparkles className="w-6 h-6 text-black" />
-              </div>
+              <img 
+                src="/logo-new.png" 
+                alt="Cashora Logo" 
+                className="relative h-14 w-auto"
+              />
             </motion.div>
             <div>
               <motion.span
@@ -115,7 +112,20 @@ const Navbar = () => {
               <motion.a
                 key={link.href}
                 href={link.href}
-                className="relative px-5 py-2.5 text-sm font-black group uppercase"
+                onClick={(e) => {
+                  e.preventDefault();
+                  // If not on home page, navigate to home first
+                  if (window.location.pathname !== '/') {
+                    window.location.href = '/' + link.href;
+                  } else {
+                    // Smooth scroll to section
+                    const element = document.querySelector(link.href);
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                  }
+                }}
+                className="relative px-5 py-2.5 text-sm font-black group uppercase cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -139,6 +149,23 @@ const Navbar = () => {
           <div className="flex items-center gap-3">
             {user ? (
               <>
+                <Link to="/dashboard">
+                  <motion.button
+                    className="px-6 py-2.5 text-sm font-black rounded-xl uppercase"
+                    style={{
+                      background: 'linear-gradient(135deg, #1ED760, #5CE1E6)',
+                      color: '#000',
+                      boxShadow: '0 4px 20px rgba(30, 215, 96, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                    }}
+                    whileHover={{
+                      boxShadow: '0 8px 32px rgba(30, 215, 96, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4)',
+                      scale: 1.05,
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Go to Dashboard
+                  </motion.button>
+                </Link>
                 <Link to="/profile">
                   <motion.div 
                     className="flex items-center gap-3 px-4 py-2.5 rounded-xl cursor-pointer" 
@@ -285,7 +312,21 @@ const Navbar = () => {
             <motion.a
               key={link.href}
               href={link.href}
-              className="block px-4 py-3 text-base font-medium rounded-lg"
+              onClick={(e) => {
+                e.preventDefault();
+                setMobileMenuOpen(false);
+                // If not on home page, navigate to home first
+                if (window.location.pathname !== '/') {
+                  window.location.href = '/' + link.href;
+                } else {
+                  // Smooth scroll to section
+                  const element = document.querySelector(link.href);
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }
+              }}
+              className="block px-4 py-3 text-base font-medium rounded-lg cursor-pointer"
               style={{
                 background: 'rgba(124, 255, 178, 0.08)',
                 border: '1px solid rgba(124, 255, 178, 0.2)',
@@ -293,7 +334,6 @@ const Navbar = () => {
                 color: 'rgba(255, 255, 255, 0.9)',
                 boxShadow: '0 2px 8px rgba(124, 255, 178, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05)',
               }}
-              onClick={() => setMobileMenuOpen(false)}
               whileTap={{ scale: 0.98 }}
             >
               {link.label}

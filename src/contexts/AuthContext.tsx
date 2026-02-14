@@ -8,6 +8,7 @@ import {
   createUserWithEmailAndPassword
 } from 'firebase/auth';
 import { auth, googleProvider, githubProvider } from '@/lib/firebase';
+import { syncFirebaseAuthWithSupabase, ensureSupabaseUserExists } from '@/lib/supabaseAuth';
 
 interface AuthContextType {
   user: User | null;
@@ -36,8 +37,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Check if Firebase is configured
     try {
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
         setUser(user);
+        
+        // Sync with Supabase
+        await syncFirebaseAuthWithSupabase(user);
+        
+        // Ensure user exists in Supabase
+        if (user) {
+          try {
+            await ensureSupabaseUserExists(user);
+          } catch (error) {
+            console.error('Failed to ensure Supabase user exists:', error);
+          }
+        }
+        
         setLoading(false);
       });
 
