@@ -154,10 +154,18 @@ const Dashboard = () => {
                 <p className="text-white/60">Loading videos...</p>
               </div>
             ) : recentVideos.length === 0 ? (
-              <div className="col-span-full text-center py-8">
-                <Video className="w-12 h-12 text-white/20 mx-auto mb-3" />
-                <p className="text-white/60 mb-4">No videos yet</p>
-                <Link to="/dashboard/create">
+              <div className="col-span-full text-center py-12 relative">
+                {/* Subtle logo watermark */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+                  <img 
+                    src="/logo-new.png" 
+                    alt="" 
+                    className="h-48 w-auto"
+                  />
+                </div>
+                <Video className="w-12 h-12 text-white/20 mx-auto mb-3 relative z-10" />
+                <p className="text-white/60 mb-4 relative z-10">No videos yet</p>
+                <Link to="/dashboard/create" className="relative z-10">
                   <motion.button
                     className="px-6 py-3 rounded-xl font-semibold"
                     style={{

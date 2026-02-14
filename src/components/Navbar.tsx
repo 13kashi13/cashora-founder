@@ -181,15 +181,15 @@ const Navbar = () => {
                     }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    {user.photoURL && (
+                    {(user.user_metadata?.avatar_url || user.user_metadata?.picture) && (
                       <img 
-                        src={user.photoURL} 
-                        alt={user.displayName || 'User'} 
+                        src={user.user_metadata?.avatar_url || user.user_metadata?.picture} 
+                        alt={user.user_metadata?.full_name || user.user_metadata?.name || 'User'} 
                         className="w-8 h-8 rounded-full ring-2 ring-[#7CFFB2]/30"
                       />
                     )}
                     <span className="text-sm font-medium text-white/90 hidden sm:block">
-                      {user.displayName || user.email}
+                      {user.user_metadata?.full_name || user.user_metadata?.name || user.email}
                     </span>
                   </motion.div>
                 </Link>

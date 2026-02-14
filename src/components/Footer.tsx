@@ -7,6 +7,21 @@ const Footer = () => {
 
       <div className="container-tight relative z-10">
         <div className="flex flex-col items-center text-center">
+          {/* Logo */}
+          <motion.div
+            className="mb-4"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <img 
+              src="/logo-new.png" 
+              alt="Cashora Logo" 
+              className="h-20 w-auto mx-auto"
+            />
+          </motion.div>
+
           <motion.h3
             className="font-display text-3xl font-bold gradient-text mb-3"
             initial={{ opacity: 0 }}

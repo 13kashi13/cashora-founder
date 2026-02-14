@@ -1,23 +1,55 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { TrendingUp, DollarSign, Target, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/SupabaseAuthContext';
-import { useSupabaseMutation } from '@/hooks/useSupabaseQuery';
 import { supabase } from '@/lib/supabase';
 
 const Onboarding = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { update } = useSupabaseMutation();
   const [step, setStep] = useState(1);
   const [saving, setSaving] = useState(false);
+  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
   const [formData, setFormData] = useState({
     goal: '',
     experienceLevel: '',
     platforms: [] as string[],
   });
+
+  // Check if user has already completed onboarding
+  useEffect(() => {
+    const checkOnboardingStatus = async () => {
+      if (!user?.id) {
+        setCheckingOnboarding(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('goal, experience_level, selected_platforms')
+          .eq('id', user.id)
+          .single();
+
+        if (!error && data) {
+          // If user has completed onboarding (has goal set), redirect to dashboard
+          if (data.goal && data.experience_level && data.selected_platforms?.length > 0) {
+            console.log('User has already completed onboarding, redirecting to dashboard');
+            navigate('/dashboard', { replace: true });
+            return;
+          }
+        }
+      } catch (error) {
+        console.error('Error checking onboarding status:', error);
+      } finally {
+        setCheckingOnboarding(false);
+      }
+    };
+
+    checkOnboardingStatus();
+  }, [user, navigate]);
 
   const goals = [
     {
@@ -168,9 +200,54 @@ const Onboarding = () => {
     }
   };
 
+  // Show loading while checking onboarding status
+  if (checkingOnboarding) {
+    return (
+      <div className="min-h-screen bg-[#050a0a] flex items-center justify-center">
+        <motion.div
+          className="flex flex-col items-center gap-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <div className="relative w-16 h-16">
+            <motion.div
+              className="absolute inset-0 rounded-full"
+              style={{
+                background: 'linear-gradient(135deg, #7CFFB2, #5CE1E6)',
+              }}
+              animate={{
+                rotate: 360,
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                rotate: { duration: 2, repeat: Infinity, ease: 'linear' },
+                scale: { duration: 1, repeat: Infinity, ease: 'easeInOut' },
+              }}
+            />
+          </div>
+          <p className="text-white/60 text-sm">Loading...</p>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#050a0a] flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
+        {/* Logo */}
+        <motion.div
+          className="flex items-center justify-center mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <img 
+            src="/logo-new.png" 
+            alt="Cashora Logo" 
+            className="h-16 w-auto"
+          />
+        </motion.div>
+
         {/* Progress bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">

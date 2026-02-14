@@ -68,18 +68,18 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         >
           {/* Logo */}
           <div className="flex items-center h-20 px-6 border-b border-[#7CFFB2]/20">
-            <Link to="/dashboard" className="flex items-center gap-3 group">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#7CFFB2] to-[#5CE1E6] rounded-full blur-xl opacity-50 group-hover:opacity-100 transition-opacity" />
-                <div 
-                  className="relative w-10 h-10 rounded-full flex items-center justify-center"
-                  style={{
-                    background: 'linear-gradient(135deg, #7CFFB2 0%, #5CE1E6 100%)',
-                  }}
-                >
-                  <Sparkles className="w-5 h-5 text-black" />
-                </div>
-              </div>
+            <Link to="/dashboard" className="flex items-center group">
+              <motion.div
+                className="relative flex items-center"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+              >
+                <img 
+                  src="/logo-new.png" 
+                  alt="Cashora Logo" 
+                  className="relative h-12 w-auto"
+                />
+              </motion.div>
               <span
                 className="text-xl font-black"
                 style={{
@@ -137,9 +137,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 border: '1px solid rgba(124, 255, 178, 0.2)',
               }}
             >
-              {user?.user_metadata?.avatar_url && (
+              {(user?.user_metadata?.avatar_url || user?.user_metadata?.picture) && (
                 <img 
-                  src={user.user_metadata.avatar_url} 
+                  src={user.user_metadata?.avatar_url || user.user_metadata?.picture} 
                   alt={user.user_metadata?.full_name || user.user_metadata?.name || 'User'} 
                   className="w-10 h-10 rounded-full ring-2 ring-[#7CFFB2]/30"
                 />
@@ -194,8 +194,12 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               {/* Same content as desktop sidebar */}
               <div className="flex flex-col h-full">
                 <div className="flex items-center justify-between h-20 px-6 border-b border-[#7CFFB2]/20">
-                  <Link to="/dashboard" className="flex items-center gap-3">
-                    <Sparkles className="w-6 h-6 text-[#7CFFB2]" />
+                  <Link to="/dashboard" className="flex items-center group">
+                    <img 
+                      src="/logo-new.png" 
+                      alt="Cashora Logo" 
+                      className="h-12 w-auto"
+                    />
                     <span className="text-xl font-black text-[#7CFFB2]">CASHORA</span>
                   </Link>
                   <button onClick={() => setSidebarOpen(false)}>

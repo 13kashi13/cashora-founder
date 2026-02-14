@@ -210,18 +210,26 @@ const ContentLibrary = () => {
           ) : filteredVideos.length === 0 ? (
             <div className="col-span-full">
               <motion.div
-                className="text-center py-16"
+                className="text-center py-16 relative"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
-                <Video className="w-16 h-16 text-white/20 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2">No videos found</h3>
-                <p className="text-white/60 mb-6">
+                {/* Subtle logo watermark */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none">
+                  <img 
+                    src="/logo-new.png" 
+                    alt="" 
+                    className="h-48 w-auto"
+                  />
+                </div>
+                <Video className="w-16 h-16 text-white/20 mx-auto mb-4 relative z-10" />
+                <h3 className="text-xl font-bold text-white mb-2 relative z-10">No videos found</h3>
+                <p className="text-white/60 mb-6 relative z-10">
                   {videos && videos.length > 0
                     ? 'Try adjusting your filters'
                     : 'Create your first video to get started'}
                 </p>
-                <Link to="/dashboard/create">
+                <Link to="/dashboard/create" className="relative z-10">
                   <motion.button
                     className="px-6 py-3 rounded-xl font-semibold"
                     style={{
