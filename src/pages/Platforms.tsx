@@ -1,15 +1,37 @@
 import { motion } from 'framer-motion';
 import { Link2, CheckCircle, XCircle, AlertCircle, Plus } from 'lucide-react';
+import React from 'react';
+import { 
+  FaYoutube, 
+  FaInstagram, 
+  FaTiktok, 
+  FaXTwitter, 
+  FaLinkedin, 
+  FaFacebook, 
+  FaPinterest 
+} from 'react-icons/fa6';
+import { SiThreads, SiBluesky } from 'react-icons/si';
+import { IconType } from 'react-icons';
 import { toast } from 'sonner';
 import DashboardLayout from '@/layouts/DashboardLayout';
 
 const Platforms = () => {
   // Mock data - in production, this would come from your database
-  const platforms = [
+  const platforms: Array<{
+    id: string;
+    name: string;
+    icon: IconType;
+    color: string;
+    connected: boolean;
+    accountName: string;
+    followers: string;
+    status: string;
+    description: string;
+  }> = [
     {
       id: 'youtube',
       name: 'YouTube',
-      icon: '▶',
+      icon: FaYoutube,
       color: '#FF0000',
       connected: false,
       accountName: '',
@@ -20,7 +42,7 @@ const Platforms = () => {
     {
       id: 'instagram',
       name: 'Instagram',
-      icon: '📷',
+      icon: FaInstagram,
       color: '#E4405F',
       connected: false,
       accountName: '',
@@ -31,7 +53,7 @@ const Platforms = () => {
     {
       id: 'tiktok',
       name: 'TikTok',
-      icon: '🎵',
+      icon: FaTiktok,
       color: '#000000',
       connected: false,
       accountName: '',
@@ -42,8 +64,8 @@ const Platforms = () => {
     {
       id: 'twitter',
       name: 'Twitter / X',
-      icon: '𝕏',
-      color: '#1DA1F2',
+      icon: FaXTwitter,
+      color: '#000000',
       connected: false,
       accountName: '',
       followers: '',
@@ -53,7 +75,7 @@ const Platforms = () => {
     {
       id: 'linkedin',
       name: 'LinkedIn',
-      icon: '💼',
+      icon: FaLinkedin,
       color: '#0A66C2',
       connected: false,
       accountName: '',
@@ -64,7 +86,7 @@ const Platforms = () => {
     {
       id: 'facebook',
       name: 'Facebook',
-      icon: '👥',
+      icon: FaFacebook,
       color: '#1877F2',
       connected: false,
       accountName: '',
@@ -75,7 +97,7 @@ const Platforms = () => {
     {
       id: 'threads',
       name: 'Threads',
-      icon: '@',
+      icon: SiThreads,
       color: '#000000',
       connected: false,
       accountName: '',
@@ -86,7 +108,7 @@ const Platforms = () => {
     {
       id: 'pinterest',
       name: 'Pinterest',
-      icon: '📌',
+      icon: FaPinterest,
       color: '#E60023',
       connected: false,
       accountName: '',
@@ -97,7 +119,7 @@ const Platforms = () => {
     {
       id: 'bluesky',
       name: 'Bluesky',
-      icon: '🦋',
+      icon: SiBluesky,
       color: '#1185FE',
       connected: false,
       accountName: '',
@@ -218,7 +240,10 @@ const Platforms = () => {
 
         {/* Platform Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {platforms.map((platform, index) => (
+          {platforms.map((platform, index) => {
+            const Icon = platform.icon as IconType;
+            
+            return (
             <motion.div
               key={platform.id}
               className="p-6 rounded-2xl backdrop-blur-xl"
@@ -237,14 +262,15 @@ const Platforms = () => {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-xl"
+                    className="w-12 h-12 rounded-xl flex items-center justify-center"
                     style={{
                       background: platform.connected
                         ? `${platform.color}20`
                         : 'rgba(255, 255, 255, 0.05)',
+                      color: platform.color,
                     }}
                   >
-                    {platform.icon}
+                    {React.createElement(Icon, { className: "w-6 h-6" })}
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-white">{platform.name}</h3>
@@ -315,7 +341,8 @@ const Platforms = () => {
                 </motion.button>
               )}
             </motion.div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Help Section */}
