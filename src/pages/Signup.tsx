@@ -12,26 +12,28 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
+  const [loadingGithub, setLoadingGithub] = useState(false);
+  const [loadingEmail, setLoadingEmail] = useState(false);
 
   const handleGoogleSignIn = async () => {
     try {
-      setLoading(true);
+      setLoadingGoogle(true);
       await signInWithGoogle();
       // Don't navigate here - OAuth will handle the redirect
     } catch (error: any) {
-      setLoading(false);
+      setLoadingGoogle(false);
       toast.error(error.message || "Failed to sign up with Google");
     }
   };
 
   const handleGithubSignIn = async () => {
     try {
-      setLoading(true);
+      setLoadingGithub(true);
       await signInWithGithub();
       // Don't navigate here - OAuth will handle the redirect
     } catch (error: any) {
-      setLoading(false);
+      setLoadingGithub(false);
       toast.error(error.message || "Failed to sign up with GitHub");
     }
   };
@@ -39,14 +41,14 @@ const Signup = () => {
   const handleEmailSignUp = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      setLoading(true);
+      setLoadingEmail(true);
       await signUpWithEmail(email, password);
       toast.success("Account created successfully!");
       navigate("/dashboard");
     } catch (error: any) {
       toast.error(error.message || "Failed to create account");
     } finally {
-      setLoading(false);
+      setLoadingEmail(false);
     }
   };
 
@@ -93,7 +95,7 @@ const Signup = () => {
         <div className="space-y-3 mb-6">
           <motion.button
             onClick={handleGoogleSignIn}
-            disabled={loading}
+            disabled={loadingGoogle}
             className="w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-3 backdrop-blur-xl relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               background: 'rgba(255, 255, 255, 0.05)',
@@ -103,11 +105,11 @@ const Signup = () => {
             }}
             whileHover={{
               background: 'rgba(255, 255, 255, 0.1)',
-              scale: loading ? 1 : 1.02,
+              scale: loadingGoogle ? 1 : 1.02,
             }}
-            whileTap={{ scale: loading ? 1 : 0.98 }}
+            whileTap={{ scale: loadingGoogle ? 1 : 0.98 }}
           >
-            {loading ? (
+            {loadingGoogle ? (
               <>
                 <motion.div
                   className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full"
@@ -132,7 +134,7 @@ const Signup = () => {
 
           <motion.button
             onClick={handleGithubSignIn}
-            disabled={loading}
+            disabled={loadingGithub}
             className="w-full py-3 rounded-xl font-semibold flex items-center justify-center gap-3 backdrop-blur-xl relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               background: 'rgba(255, 255, 255, 0.05)',
@@ -142,15 +144,15 @@ const Signup = () => {
             }}
             whileHover={{
               background: 'rgba(255, 255, 255, 0.1)',
-              scale: loading ? 1 : 1.02,
+              scale: loadingGithub ? 1 : 1.02,
             }}
-            whileTap={{ scale: loading ? 1 : 0.98 }}
+            whileTap={{ scale: loadingGithub ? 1 : 0.98 }}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
             </svg>
             <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer" />
-            {loading ? "Signing up..." : "Continue with GitHub"}
+            {loadingGithub ? "Signing up..." : "Continue with GitHub"}
           </motion.button>
         </div>
 
@@ -175,7 +177,7 @@ const Signup = () => {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
-              disabled={loading}
+              disabled={loadingEmail}
               className="w-full px-4 py-3 rounded-xl backdrop-blur-xl outline-none transition-all disabled:opacity-50"
               style={{
                 background: 'rgba(255, 255, 255, 0.05)',
@@ -195,7 +197,7 @@ const Signup = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              disabled={loading}
+              disabled={loadingEmail}
               className="w-full px-4 py-3 rounded-xl backdrop-blur-xl outline-none transition-all disabled:opacity-50"
               style={{
                 background: 'rgba(255, 255, 255, 0.05)',
@@ -215,7 +217,7 @@ const Signup = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              disabled={loading}
+              disabled={loadingEmail}
               className="w-full px-4 py-3 rounded-xl backdrop-blur-xl outline-none transition-all disabled:opacity-50"
               style={{
                 background: 'rgba(255, 255, 255, 0.05)',
@@ -228,18 +230,18 @@ const Signup = () => {
 
           <motion.button
             type="submit"
-            disabled={loading}
+            disabled={loadingEmail}
             className="w-full py-3 rounded-xl font-semibold relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               background: 'linear-gradient(90deg, #1ED760, #5CE1E6)',
               color: '#000',
               boxShadow: '0 0 30px rgba(30, 215, 96, 0.4)',
             }}
-            whileHover={{ boxShadow: '0 0 40px rgba(30, 215, 96, 0.6)', scale: loading ? 1 : 1.02 }}
-            whileTap={{ scale: loading ? 1 : 0.98 }}
+            whileHover={{ boxShadow: '0 0 40px rgba(30, 215, 96, 0.6)', scale: loadingEmail ? 1 : 1.02 }}
+            whileTap={{ scale: loadingEmail ? 1 : 0.98 }}
           >
             <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full animate-shimmer" />
-            {loading ? "Creating Account..." : "Create Account"}
+            {loadingEmail ? "Creating Account..." : "Create Account"}
           </motion.button>
         </form>
 
