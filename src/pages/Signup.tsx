@@ -2,12 +2,12 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/SupabaseAuthContext";
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { toast } from "sonner";
 import ScrollingPlatforms from "@/components/OrbitingPlatforms";
 
 const Signup = () => {
-  const { signInWithGoogle, signInWithGithub, signUpWithEmail } = useAuth();
+  const { signInWithGoogle, signInWithGithub, signUpWithEmail, user, loading } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,6 +15,13 @@ const Signup = () => {
   const [loadingGoogle, setLoadingGoogle] = useState(false);
   const [loadingGithub, setLoadingGithub] = useState(false);
   const [loadingEmail, setLoadingEmail] = useState(false);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, loading, navigate]);
 
   const handleGoogleSignIn = async () => {
     try {
