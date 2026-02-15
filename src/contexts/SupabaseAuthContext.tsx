@@ -73,11 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Only update state if mounted
       setSession(session);
       setUser(session?.user ?? null);
-      
-      // Ensure loading is false after any auth state change
-      if (loading) {
-        setLoading(false);
-      }
+      setLoading(false);
     });
 
     return () => {

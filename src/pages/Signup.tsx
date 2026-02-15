@@ -16,9 +16,14 @@ const Signup = () => {
   const [loadingGithub, setLoadingGithub] = useState(false);
   const [loadingEmail, setLoadingEmail] = useState(false);
 
-  // Redirect if already logged in
+  // Redirect if already logged in (but not during OAuth callback)
   useEffect(() => {
-    if (!loading && user) {
+    // Check if this is an OAuth callback (URL contains access_token or code)
+    const isOAuthCallback = window.location.hash.includes('access_token') || 
+                           window.location.search.includes('code=');
+    
+    if (!loading && user && !isOAuthCallback) {
+      console.log('User already logged in, redirecting to dashboard');
       navigate('/dashboard', { replace: true });
     }
   }, [user, loading, navigate]);

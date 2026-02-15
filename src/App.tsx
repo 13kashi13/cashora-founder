@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import FirebaseTest from "./pages/FirebaseTest";
 import SupabaseTest from "./pages/SupabaseTest";
 import DebugSupabase from "./pages/DebugSupabase";
+import AuthDebug from "./pages/AuthDebug";
 import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
 import Onboarding from "./pages/Onboarding";
@@ -146,6 +147,7 @@ const App = () => (
             <Route path="/firebase-test" element={<FirebaseTest />} />
             <Route path="/supabase-test" element={<SupabaseTest />} />
             <Route path="/debug" element={<DebugSupabase />} />
+            <Route path="/auth-debug" element={<AuthDebug />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
