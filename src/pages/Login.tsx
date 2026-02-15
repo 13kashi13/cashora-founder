@@ -41,7 +41,7 @@ const Login = () => {
       setLoading(true);
       await signInWithEmail(email, password);
       toast.success("Successfully signed in!");
-      navigate("/onboarding");
+      navigate("/dashboard");
     } catch (error: any) {
       toast.error(error.message || "Failed to sign in");
     } finally {
