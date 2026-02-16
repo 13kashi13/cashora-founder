@@ -1,25 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://hyzpywpnfvifftzhjvxo.supabase.co';
-const supabasePublishableKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-console.log('Supabase Config (2026):', {
+console.log('Supabase Config:', {
   url: supabaseUrl,
-  hasKey: !!supabasePublishableKey,
-  keyLength: supabasePublishableKey?.length,
-  keyFormat: supabasePublishableKey?.startsWith('sb_publishable_') ? '✅ Publishable Key (2026)' : 
-             supabasePublishableKey?.startsWith('eyJ') ? '⚠️ Legacy JWT (pre-2026)' : '❌ Unknown',
+  hasKey: !!supabaseAnonKey,
+  keyLength: supabaseAnonKey?.length,
+  keyFormat: supabaseAnonKey?.startsWith('eyJ') ? '✅ Valid JWT Key' : '❌ Invalid Key Format',
 });
 
-if (!supabasePublishableKey) {
-  console.error('❌ Supabase Publishable key is missing!');
-  console.error('Add VITE_SUPABASE_ANON_KEY=sb_publishable_... to .env');
-  console.error('Get it from: Supabase Dashboard → Settings → API → Publishable key');
+if (!supabaseAnonKey) {
+  console.error('❌ Supabase anon key is missing!');
+  console.error('Add VITE_SUPABASE_ANON_KEY to .env');
+  console.error('Get it from: Supabase Dashboard → Settings → API → anon/public key');
 }
 
-// 2026 Format: Supabase uses "Publishable keys" (sb_publishable_...)
-// This replaced the old "anon keys" (JWT format starting with eyJ...)
-export const supabase = createClient(supabaseUrl, supabasePublishableKey, {
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
