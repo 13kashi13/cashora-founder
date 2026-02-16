@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Supabase Connection</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Supabase Connection Test</h1>
+    <div id="result"></div>
+    
+    <script>
+        const supabaseUrl = 'https://hyzpywpnfvifftzhjvxo.supabase.co';
+        const supabaseKey = 'sb_publishable_ho7f0rMVCSYrKPeB7-eT0A_ujXeG4WR';
+        
+        console.log('Testing Supabase connection...');
+        console.log('URL:', supabaseUrl);
+        console.log('Key length:', supabaseKey.length);
+        console.log('Key prefix:', supabaseKey.substring(0, 20));
+        
+        try {
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+            
+            supabase.auth.getSession().then(({ data, error }) => {
+                const resultDiv = document.getElementById('result');
+                
+                if (error) {
+                    console.error('Error:', error);
+                    resultDiv.innerHTML = `
+                        <h2 style="color: red;">❌ Connection Failed</h2>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p><strong>Status:</strong> ${error.status || 'Unknown'}</p>
+                        <pre>${JSON.stringify(error, null, 2)}</pre>
+                    `;
+                } else {
+                    console.log('Success:', data);
+                    resultDiv.innerHTML = `
+                        <h2 style="color: green;">✅ Connection Successful</h2>
+                        <p>Session: ${data.session ? 'Active' : 'None (expected)'}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            });
+        } catch (err) {
+            console.error('Exception:', err);
+            document.getElementById('result').innerHTML = `
+                <h2 style="color: red;">❌ Exception</h2>
+                <pre>${err.message}</pre>
+            `;
+        }
+    </script>
+</body>
+</html>
